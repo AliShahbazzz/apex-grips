@@ -1,0 +1,35 @@
+/*
+ * Apex Grips color theme.
+ *
+ * Every color in the UI comes from these variables, including the
+ * neobrutalism shadow and the grip canvas trim. Change a value here
+ * and it updates everywhere. Token names follow neobrutalism.dev.
+ *
+ * Grip colors (Crimson Red, Nitro Blue, ...) are product options, not
+ * theme colors, so they live in src/data/catalog.ts.
+ */
+:root {
+  /* Brand: primary actions, highlights, badges */
+  --main: #ff002b;
+  --main-foreground: #ffffff;
+
+  /* Page surfaces and text */
+  --background: #ffffff;
+  --secondary-background: #f4f4f6;
+  --foreground: #080808;
+
+  /* Dark surfaces: announcement bar, dark buttons, cart header */
+  --inverse: #080808;
+  --inverse-foreground: #ffffff;
+
+  /* Lines, focus and overlays */
+  --border: #080808;
+  --ring: #080808;
+  --overlay: rgb(0 0 0 / 0.8);
+
+  /* Status */
+  --success: #16a34a;
+
+  /* Hard offset shadow, the signature neobrutalism effect */
+  --shadow: 4px 4px 0px 0px var(--border);
+}
