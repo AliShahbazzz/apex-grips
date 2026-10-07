@@ -94,25 +94,27 @@ export async function resolveProductIds(
         "product_variant",
         ["product_id"],
         ids,
-        (row) => [row.product_id],
+        (row) => [row?.product_id],
         deleted,
       );
     case "product-option":
       return relatedProductIds(
         query,
         "product_option",
-        ["product_id"],
+        ["products.id"],
         ids,
-        (row) => [row.product_id],
+        // Options are shared across products since Medusa 2.16
+        (row) => (row?.products ?? []).map((product: any) => product?.id),
         deleted,
       );
     case "product-option-value":
       return relatedProductIds(
         query,
         "product_option_value",
-        ["option.product_id"],
+        ["option.products.id"],
         ids,
-        (row) => [row.option?.product_id],
+        (row) =>
+          (row?.option?.products ?? []).map((product: any) => product?.id),
         deleted,
       );
     case "product-tag":
