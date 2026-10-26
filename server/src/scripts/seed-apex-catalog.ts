@@ -19,6 +19,7 @@ import {
   createStockLocationsWorkflow,
   createTaxRegionsWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
+  updateProductsWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
 import {
@@ -40,6 +41,7 @@ import {
   PATTERNS,
   SPORT_PATTERNS,
   SPORTS,
+  type SportData,
   sportHandle,
   variantSku,
 } from "./data/apex-catalog"
@@ -47,6 +49,15 @@ import {
 const REGION_NAME = "India"
 const COUNTRY_CODE = "in"
 const STOCK_LOCATION_NAME = "India Warehouse"
+
+/** Product metadata the storefront reads. `rank` sets the sport order. */
+const sportMetadata = (sport: SportData) => ({
+  sport: sport.id,
+  rank: SPORTS.indexOf(sport),
+  icon: sport.icon,
+  geometry: sport.geometry,
+  fit_hint: sport.fitHint,
+})
 
 export default async function seedApexCatalog({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
@@ -311,12 +322,24 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
 
   const { data: existingProducts } = await query.graph({
     entity: "product",
-    fields: ["handle"],
+    fields: ["id", "handle"],
     filters: { handle: SPORTS.map((sport) => sportHandle(sport.id)) },
   })
   const missingSports = SPORTS.filter(
     (sport) => !existingProducts.some((product) => product.handle === sportHandle(sport.id))
   )
+
+  // Keep existing products' metadata (order, icon, hints) in sync with the data file
+  for (const product of existingProducts) {
+    const sport = SPORTS.find((candidate) => sportHandle(candidate.id) === product.handle)
+    if (!sport) continue
+    await updateProductsWorkflow(container).run({
+      input: { selector: { id: product.id }, update: { metadata: sportMetadata(sport) } },
+    })
+  }
+  if (existingProducts.length) {
+    logger.info(`Synced metadata on ${existingProducts.length} existing sport product(s).`)
+  }
 
   if (missingSports.length) {
     const { result: createdProducts } = await createProductsWorkflow(container).run({
@@ -337,12 +360,7 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
             status: ProductStatus.PUBLISHED,
             shipping_profile_id: shippingProfile.id,
             sales_channels: [{ id: salesChannel.id }],
-            metadata: {
-              sport: sport.id,
-              icon: sport.icon,
-              geometry: sport.geometry,
-              fit_hint: sport.fitHint,
-            },
+            metadata: sportMetadata(sport),
             options: [
               { id: patternOption.id, value_ids: patternValueIds },
               { id: colorOption.id },

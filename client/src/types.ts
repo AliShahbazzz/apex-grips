@@ -15,6 +15,8 @@ export type Sport = {
   patternIds: PatternId[]
   /** Variant (SKU) id per pattern and color, keyed by variantKey() */
   variantIds: Record<string, string>
+  /** Variant thumbnail per pattern and color, keyed by variantKey() */
+  variantImages: Record<string, string>
 }
 
 export type GripColor = {

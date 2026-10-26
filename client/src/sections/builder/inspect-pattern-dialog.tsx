@@ -5,11 +5,11 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-  GripCanvas,
+  GripPreview,
   Heading,
   Progress,
 } from "@/components"
-import { findPattern } from "@/catalog/selectors"
+import { findPattern, findVariantImage } from "@/catalog/selectors"
 import { useCatalog } from "@/catalog/use-catalog"
 import { useStore } from "@/store/store"
 
@@ -17,6 +17,9 @@ export function InspectPatternDialog() {
   const { state, dispatch } = useStore()
   const catalog = useCatalog()
   const pattern = state.inspectedPatternId && findPattern(catalog, state.inspectedPatternId)
+  const imageUrl = pattern
+    ? findVariantImage(catalog, state.sport, pattern.id, state.activeColor.hex)
+    : undefined
   const open = state.overlay === "inspect" && !!pattern
   const close = () => dispatch({ type: "closeOverlay" })
 
@@ -26,7 +29,8 @@ export function InspectPatternDialog() {
         {pattern && (
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
             <div className="flex flex-col items-center justify-center rounded-base border-2 border-border bg-secondary-background p-4">
-              <GripCanvas
+              <GripPreview
+                imageUrl={imageUrl}
                 pattern={pattern.id}
                 color={state.activeColor.hex}
                 sport={state.sport}
@@ -36,7 +40,7 @@ export function InspectPatternDialog() {
                 className="border border-border bg-background"
               />
               <span className="mt-2 text-[10px] font-black uppercase text-foreground/60">
-                Procedural 3D texture preview
+                {imageUrl ? "Product photo" : "Procedural 3D texture preview"}
               </span>
             </div>
 

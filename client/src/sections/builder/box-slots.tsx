@@ -1,5 +1,5 @@
-import { Button, GripCanvas } from "@/components"
-import { findPattern } from "@/catalog/selectors"
+import { Button, GripPreview } from "@/components"
+import { findPattern, findVariantImage } from "@/catalog/selectors"
 import { useCatalog } from "@/catalog/use-catalog"
 import { PACK_SIZE } from "@/data/builder-rules"
 import { cn } from "@/lib/utils"
@@ -62,7 +62,8 @@ export function BoxSlots() {
                   >
                     ✕
                   </button>
-                  <GripCanvas
+                  <GripPreview
+                    imageUrl={findVariantImage(catalog, state.sport, slot.patternId, slot.color.hex)}
                     pattern={slot.patternId}
                     color={slot.color.hex}
                     sport={state.sport}

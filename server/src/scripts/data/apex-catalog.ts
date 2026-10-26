@@ -19,6 +19,7 @@ export type SportData = {
   fitHint: string
 }
 
+/** In storefront display order; the first sport is selected by default */
 export const SPORTS: SportData[] = [
   {
     id: "cricket",

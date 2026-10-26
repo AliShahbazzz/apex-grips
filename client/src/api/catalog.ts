@@ -14,6 +14,7 @@ const PRODUCT_FIELDS = [
   "*options",
   "*options.values",
   "variants.id",
+  "variants.thumbnail",
   "*variants.options",
   "*variants.calculated_price",
 ].join(",")
@@ -54,6 +55,7 @@ type ApiProduct = {
   options: { id: string; title: string; values: ApiOptionValue[] }[]
   variants: {
     id: string
+    thumbnail: string | null
     options: ApiOptionValue[]
     calculated_price: { calculated_amount: number; currency_code: string } | null
   }[]
@@ -95,6 +97,7 @@ function toSport(product: ApiProduct): Sport {
   )
 
   const variantIds: Record<string, string> = {}
+  const variantImages: Record<string, string> = {}
   const patternIds = new Set<string>()
   for (const variant of product.variants) {
     const patternId = variant.options
@@ -104,6 +107,7 @@ function toSport(product: ApiProduct): Sport {
     if (!patternId || !hex) continue
     patternIds.add(patternId)
     variantIds[variantKey(patternId, hex)] = variant.id
+    if (variant.thumbnail) variantImages[variantKey(patternId, hex)] = variant.thumbnail
   }
 
   const id = text(product.metadata, "sport") ?? product.handle
@@ -116,6 +120,7 @@ function toSport(product: ApiProduct): Sport {
     fitHint: text(product.metadata, "fit_hint") ?? "",
     patternIds: [...patternIds],
     variantIds,
+    variantImages,
   }
 }
 

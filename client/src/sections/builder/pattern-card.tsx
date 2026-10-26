@@ -1,4 +1,6 @@
-import { Badge, Button, Card, GripCanvas } from "@/components"
+import { Badge, Button, Card, GripPreview } from "@/components"
+import { findVariantImage } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
 import type { GripColor, Pattern, SportId } from "@/types"
 
 type PatternCardProps = {
@@ -10,6 +12,7 @@ type PatternCardProps = {
 }
 
 export function PatternCard({ pattern, color, sport, onAdd, onInspect }: PatternCardProps) {
+  const catalog = useCatalog()
   return (
     <Card className="relative flex min-w-0 flex-col justify-between p-3 transition-all hover:border-main sm:p-4">
       <Badge size="sm" className="absolute left-2 top-2 z-10">
@@ -17,7 +20,8 @@ export function PatternCard({ pattern, color, sport, onAdd, onInspect }: Pattern
       </Badge>
 
       <div className="relative mb-3 flex items-center justify-center rounded-base border-2 border-border bg-secondary-background p-2 sm:p-3">
-        <GripCanvas
+        <GripPreview
+          imageUrl={findVariantImage(catalog, sport, pattern.id, color.hex)}
           pattern={pattern.id}
           color={color.hex}
           sport={sport}
