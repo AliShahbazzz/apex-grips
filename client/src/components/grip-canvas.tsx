@@ -41,7 +41,8 @@ export function GripCanvas({
       ref={canvasRef}
       role="img"
       aria-label={label}
-      style={{ width, height }}
+      // Shrinks with its container, keeping the aspect ratio
+      style={{ width, maxWidth: "100%", height: "auto", aspectRatio: `${width} / ${height}` }}
       className={className}
     />
   )

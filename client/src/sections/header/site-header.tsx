@@ -33,7 +33,7 @@ export function SiteHeader() {
   const setSport = (sport: SportId) => dispatch({ type: "setSport", sport })
 
   return (
-    <header className="sticky top-0 z-40 border-b-4 border-border bg-background">
+    <header className="top-0 z-40 border-b-4 border-border bg-background">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
 

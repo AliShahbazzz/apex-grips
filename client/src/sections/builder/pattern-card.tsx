@@ -11,12 +11,12 @@ type PatternCardProps = {
 
 export function PatternCard({ pattern, color, sport, onAdd, onInspect }: PatternCardProps) {
   return (
-    <Card className="relative flex flex-col justify-between p-4 transition-all hover:border-main">
+    <Card className="relative flex min-w-0 flex-col justify-between p-3 transition-all hover:border-main sm:p-4">
       <Badge size="sm" className="absolute left-2 top-2 z-10">
         {pattern.badge}
       </Badge>
 
-      <div className="relative mb-3 flex items-center justify-center rounded-base border-2 border-border bg-secondary-background p-3">
+      <div className="relative mb-3 flex items-center justify-center rounded-base border-2 border-border bg-secondary-background p-2 sm:p-3">
         <GripCanvas
           pattern={pattern.id}
           color={color.hex}
@@ -36,25 +36,25 @@ export function PatternCard({ pattern, color, sport, onAdd, onInspect }: Pattern
       </div>
 
       <div>
-        <div className="mb-1 flex items-center justify-between gap-2">
-          <h4 className="text-lg font-black uppercase leading-none">{pattern.name}</h4>
+        <div className="mb-1 flex flex-wrap items-center justify-between gap-1 sm:gap-2">
+          <h4 className="text-sm font-black uppercase leading-none sm:text-lg">{pattern.name}</h4>
           <Badge variant="neutral" size="sm">
             {pattern.tag}
           </Badge>
         </div>
-        <p className="mb-3 text-[11px] font-bold uppercase leading-snug text-foreground/70">
+        <p className="mb-3 text-[10px] font-bold uppercase leading-snug text-foreground/70 sm:text-[11px]">
           {pattern.description}
         </p>
       </div>
 
       <div className="space-y-2 border-t-2 border-border/10 pt-3">
-        <div className="flex justify-between text-[10px] font-black uppercase">
+        <div className="flex flex-col gap-0.5 text-[10px] font-black uppercase sm:flex-row sm:justify-between">
           <span>Sweat Tack: {pattern.sweatScore}%</span>
           <span>Shock Abs: {pattern.shockScore}%</span>
         </div>
-        <Button variant="dark" onClick={onAdd} className="w-full">
+        <Button variant="dark" onClick={onAdd} className="w-full px-2 sm:px-5">
           <span>+ Add to Slot</span>
-          <span className="text-[10px] opacity-75">({color.name})</span>
+          <span className="hidden text-[10px] opacity-75 sm:inline">({color.name})</span>
         </Button>
       </div>
     </Card>

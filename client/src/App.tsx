@@ -6,6 +6,7 @@ import { PatternGallery } from "@/sections/builder/pattern-gallery"
 import { CartSheet } from "@/sections/cart/cart-sheet"
 import { CheckoutDialog } from "@/sections/checkout/checkout-dialog"
 import { OrderSuccessDialog } from "@/sections/checkout/order-success-dialog"
+import { Toaster } from "@/sections/feedback/toaster"
 import { FitGuideDialog } from "@/sections/fit-guide/fit-guide-dialog"
 import { AnnouncementBar } from "@/sections/header/announcement-bar"
 import { SiteHeader } from "@/sections/header/site-header"
@@ -41,6 +42,7 @@ export default function App() {
       <CartSheet />
       <CheckoutDialog />
       <OrderSuccessDialog />
+      <Toaster />
     </>
   )
 }

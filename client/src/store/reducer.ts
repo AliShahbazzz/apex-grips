@@ -5,6 +5,7 @@ import {
   PATTERNS,
   PROMO_CODES,
   getGripColor,
+  getPattern,
 } from "@/data/catalog"
 import type {
   Box,
@@ -31,7 +32,11 @@ export type StoreState = {
   overlay: Overlay | null
   inspectedPatternId: PatternId | null
   orderId: string | null
+  toast: Toast | null
+  nextToastId: number
 }
+
+export type Toast = { id: number; message: string }
 
 export type StoreAction =
   | { type: "setSport"; sport: SportId }
@@ -50,6 +55,7 @@ export type StoreAction =
   | { type: "inspectPattern"; patternId: PatternId }
   | { type: "closeOverlay" }
   | { type: "placeOrder"; orderId: string }
+  | { type: "dismissToast"; id: number }
   | { type: "reset" }
 
 const emptySlots = (): (Slot | null)[] => Array(PACK_SIZE).fill(null)
@@ -67,6 +73,8 @@ export const initialState: StoreState = {
   overlay: null,
   inspectedPatternId: null,
   orderId: null,
+  toast: null,
+  nextToastId: 1,
 }
 
 function updateActiveSlots(
@@ -77,6 +85,14 @@ function updateActiveSlots(
     index === state.activeBoxIndex ? { ...box, slots: update(box.slots) } : box
   )
   return { ...state, boxes }
+}
+
+function withToast(state: StoreState, message: string): StoreState {
+  return {
+    ...state,
+    toast: { id: state.nextToastId, message },
+    nextToastId: state.nextToastId + 1,
+  }
 }
 
 function withNewBox(state: StoreState): StoreState {
@@ -100,12 +116,23 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
       const slot: Slot = { patternId: action.patternId, color: state.activeColor }
       const activeSlots = state.boxes[state.activeBoxIndex].slots
       // A full box rolls over into a new one, like the mockup
-      const target = activeSlots.includes(null) ? state : withNewBox(state)
-      return updateActiveSlots(target, (slots) => {
-        const next = [...slots]
-        next[next.indexOf(null)] = slot
-        return next
+      const rolledOver = !activeSlots.includes(null)
+      const target = rolledOver ? withNewBox(state) : state
+      const next = updateActiveSlots(target, (slots) => {
+        const filled = [...slots]
+        filled[filled.indexOf(null)] = slot
+        return filled
       })
+
+      const box = next.boxes[next.activeBoxIndex]
+      const filledCount = box.slots.filter(Boolean).length
+      const patternName = getPattern(action.patternId)?.name ?? "Grip"
+      const message = rolledOver
+        ? `Box ${state.boxes[state.activeBoxIndex].id} was full. Started Box ${box.id} with ${patternName}`
+        : filledCount === PACK_SIZE
+          ? `Box ${box.id} complete! Add it to cart`
+          : `${patternName} (${slot.color.name}) added to Box ${box.id} · ${filledCount}/${PACK_SIZE}`
+      return withToast(next, message)
     }
 
     case "clearSlot":
@@ -136,12 +163,13 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case "applyBundle": {
       const bundle = CURATED_BUNDLES.find((b) => b.id === action.bundleId)
       if (!bundle) return state
-      return updateActiveSlots(state, () =>
+      const next = updateActiveSlots(state, () =>
         bundle.colors.map((hex, index) => ({
           patternId: PATTERNS[index % PATTERNS.length].id,
           color: getGripColor(hex) ?? { hex, name: bundle.label },
         }))
       )
+      return withToast(next, `${bundle.label} loaded into Box ${next.boxes[next.activeBoxIndex].id}`)
     }
 
     case "addBoxToCart": {
@@ -186,7 +214,17 @@ export function storeReducer(state: StoreState, action: StoreAction): StoreState
     case "placeOrder":
       return { ...state, overlay: "success", orderId: action.orderId }
 
+    case "dismissToast":
+      // Ignore timers from toasts that were already replaced
+      return state.toast?.id === action.id ? { ...state, toast: null } : state
+
     case "reset":
-      return { ...initialState, sport: state.sport, activeColor: state.activeColor }
+      return {
+        ...initialState,
+        sport: state.sport,
+        activeColor: state.activeColor,
+        // Keep ids unique so a pending dismiss timer can't close a newer toast
+        nextToastId: state.nextToastId,
+      }
   }
 }

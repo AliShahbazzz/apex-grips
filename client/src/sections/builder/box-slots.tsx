@@ -66,7 +66,7 @@ export function BoxSlots() {
                     width={48}
                     height={64}
                     label={`${pattern.name} in ${slot.color.name}`}
-                    className="mt-2"
+                    className="mt-2 motion-safe:animate-pop"
                   />
                   <span className="mt-1 w-full truncate text-center text-[9px] font-black uppercase leading-tight">
                     {pattern.name}

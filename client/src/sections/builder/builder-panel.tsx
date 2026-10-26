@@ -45,7 +45,7 @@ export function BuilderPanel() {
   const { total } = getBundlePricing(boxCount)
 
   return (
-    <section aria-label="5-pack builder" className="z-30 mb-8 lg:sticky lg:top-[84px]">
+    <section aria-label="5-pack builder" className="z-30 mb-8 lg:sticky lg:top-[0px]">
       <Card className="p-4 md:p-5">
         <div className="mb-4 flex flex-col justify-between gap-4 border-b-2 border-border pb-4 md:flex-row md:items-center">
           <BoxTabs />
