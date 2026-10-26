@@ -1,5 +1,7 @@
 import { Badge, Button } from "@/components"
-import { PACK_SIZE, getPattern, getSport } from "@/data/catalog"
+import { findPattern, findSport } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import type { CartItem } from "@/types"
 
 type CartItemCardProps = {
@@ -9,6 +11,7 @@ type CartItemCardProps = {
 }
 
 export function CartItemCard({ item, position, onRemove }: CartItemCardProps) {
+  const catalog = useCatalog()
   return (
     <li className="space-y-2 rounded-base border-2 border-border bg-secondary-background p-3">
       <div className="flex items-center justify-between border-b border-border/20 pb-2">
@@ -17,7 +20,7 @@ export function CartItemCard({ item, position, onRemove }: CartItemCardProps) {
             {PACK_SIZE}-Pack Bundle #{position}
           </Badge>
           <span className="text-xs font-black uppercase">
-            {getSport(item.sport)?.label}
+            {findSport(catalog, item.sport)?.label}
           </span>
         </div>
         <Button variant="link" size="inline" className="text-xs no-underline" onClick={onRemove}>
@@ -30,14 +33,14 @@ export function CartItemCard({ item, position, onRemove }: CartItemCardProps) {
           <li
             key={index}
             className="border border-border bg-background p-1 text-center"
-            title={`${getPattern(slot.patternId)?.name}, ${slot.color.name}`}
+            title={`${findPattern(catalog, slot.patternId)?.name}, ${slot.color.name}`}
           >
             <div
               className="mb-1 h-3 w-full border border-border"
               style={{ backgroundColor: slot.color.hex }}
             />
             <div className="truncate text-[7px] font-black uppercase">
-              {getPattern(slot.patternId)?.name}
+              {findPattern(catalog, slot.patternId)?.name}
             </div>
           </li>
         ))}

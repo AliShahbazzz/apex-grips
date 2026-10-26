@@ -9,12 +9,14 @@ import {
   Heading,
   Progress,
 } from "@/components"
-import { getPattern } from "@/data/catalog"
+import { findPattern } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
 import { useStore } from "@/store/store"
 
 export function InspectPatternDialog() {
   const { state, dispatch } = useStore()
-  const pattern = state.inspectedPatternId && getPattern(state.inspectedPatternId)
+  const catalog = useCatalog()
+  const pattern = state.inspectedPatternId && findPattern(catalog, state.inspectedPatternId)
   const open = state.overlay === "inspect" && !!pattern
   const close = () => dispatch({ type: "closeOverlay" })
 
@@ -49,26 +51,33 @@ export function InspectPatternDialog() {
                 {pattern.description}
               </DialogDescription>
 
-              <div className="space-y-2 text-xs font-black uppercase">
-                <div>
-                  <div className="mb-1 flex justify-between">
-                    <span>Sweat Resistance</span>
-                    <span className="text-main">{pattern.sweatScore}%</span>
-                  </div>
-                  <Progress label="Sweat resistance" value={pattern.sweatScore} />
+              {/* Scores show once the backend provides them */}
+              {(pattern.sweatScore !== undefined || pattern.shockScore !== undefined) && (
+                <div className="space-y-2 text-xs font-black uppercase">
+                  {pattern.sweatScore !== undefined && (
+                    <div>
+                      <div className="mb-1 flex justify-between">
+                        <span>Sweat Resistance</span>
+                        <span className="text-main">{pattern.sweatScore}%</span>
+                      </div>
+                      <Progress label="Sweat resistance" value={pattern.sweatScore} />
+                    </div>
+                  )}
+                  {pattern.shockScore !== undefined && (
+                    <div>
+                      <div className="mb-1 flex justify-between">
+                        <span>Shock Absorption</span>
+                        <span className="text-main">{pattern.shockScore}%</span>
+                      </div>
+                      <Progress
+                        label="Shock absorption"
+                        value={pattern.shockScore}
+                        indicatorClassName="bg-inverse"
+                      />
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <div className="mb-1 flex justify-between">
-                    <span>Shock Absorption</span>
-                    <span className="text-main">{pattern.shockScore}%</span>
-                  </div>
-                  <Progress
-                    label="Shock absorption"
-                    value={pattern.shockScore}
-                    indicatorClassName="bg-inverse"
-                  />
-                </div>
-              </div>
+              )}
 
               <Button
                 size="lg"

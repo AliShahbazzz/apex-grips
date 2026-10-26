@@ -1,9 +1,10 @@
 import { ColorSwatch } from "@/components"
-import { GRIP_COLORS } from "@/data/catalog"
+import { useCatalog } from "@/catalog/use-catalog"
 import { useStore } from "@/store/store"
 
 export function ColorPicker() {
   const { state, dispatch } = useStore()
+  const { colors } = useCatalog()
 
   return (
     <div className="rounded-base border-2 border-border bg-secondary-background p-3">
@@ -18,7 +19,7 @@ export function ColorPicker() {
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        {GRIP_COLORS.map((color) => (
+        {colors.map((color) => (
           <ColorSwatch
             key={color.hex}
             color={color.hex}

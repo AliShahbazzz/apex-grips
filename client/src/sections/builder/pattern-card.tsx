@@ -48,10 +48,13 @@ export function PatternCard({ pattern, color, sport, onAdd, onInspect }: Pattern
       </div>
 
       <div className="space-y-2 border-t-2 border-border/10 pt-3">
-        <div className="flex flex-col gap-0.5 text-[10px] font-black uppercase sm:flex-row sm:justify-between">
-          <span>Sweat Tack: {pattern.sweatScore}%</span>
-          <span>Shock Abs: {pattern.shockScore}%</span>
-        </div>
+        {/* Scores show once the backend provides them */}
+        {(pattern.sweatScore !== undefined || pattern.shockScore !== undefined) && (
+          <div className="flex flex-col gap-0.5 text-[10px] font-black uppercase sm:flex-row sm:justify-between">
+            {pattern.sweatScore !== undefined && <span>Sweat Tack: {pattern.sweatScore}%</span>}
+            {pattern.shockScore !== undefined && <span>Shock Abs: {pattern.shockScore}%</span>}
+          </div>
+        )}
         <Button variant="dark" onClick={onAdd} className="w-full px-2 sm:px-5">
           <span>+ Add to Slot</span>
           <span className="hidden text-[10px] opacity-75 sm:inline">({color.name})</span>

@@ -10,6 +10,7 @@ import {
   Label,
   Textarea,
 } from "@/components"
+import { useCatalog } from "@/catalog/use-catalog"
 import { formatPrice } from "@/lib/pricing"
 import { selectCartPricing, useStore } from "@/store/store"
 
@@ -25,7 +26,8 @@ function createOrderId() {
 
 export function CheckoutDialog() {
   const { state, dispatch } = useStore()
-  const { total } = selectCartPricing(state)
+  const catalog = useCatalog()
+  const { total } = selectCartPricing(state, catalog)
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -110,7 +112,7 @@ export function CheckoutDialog() {
 
           <div className="flex justify-between rounded-base border-2 border-border bg-secondary-background p-3 text-xs font-black uppercase">
             <span>Total Payable:</span>
-            <span className="text-main">{formatPrice(total)}</span>
+            <span className="text-main">{formatPrice(total, catalog.currencyCode)}</span>
           </div>
 
           <Button type="submit" size="lg" className="w-full">

@@ -7,7 +7,8 @@ import {
   SheetContent,
   SheetTitle,
 } from "@/components"
-import { PACK_SIZE } from "@/data/catalog"
+import { useCatalog } from "@/catalog/use-catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import { formatPrice } from "@/lib/pricing"
 import { cn } from "@/lib/utils"
 import { selectCartPricing, useStore } from "@/store/store"
@@ -69,7 +70,8 @@ function PromoForm() {
 
 export function CartSheet() {
   const { state, dispatch } = useStore()
-  const { subtotal, multiPackDiscount, promoDiscount, total } = selectCartPricing(state)
+  const catalog = useCatalog()
+  const { subtotal, multiPackDiscount, promoDiscount, total } = selectCartPricing(state, catalog)
   const isEmpty = state.cart.length === 0
 
   return (
@@ -120,23 +122,23 @@ export function CartSheet() {
           <PromoForm />
 
           <div className="space-y-1 border-t-2 border-border/20 pt-3 text-xs font-black uppercase">
-            <SummaryRow label="Subtotal" value={formatPrice(subtotal)} />
+            <SummaryRow label="Subtotal" value={formatPrice(subtotal, catalog.currencyCode)} />
             <SummaryRow
               label="Multi-pack discount"
-              value={`-${formatPrice(multiPackDiscount)}`}
+              value={`-${formatPrice(multiPackDiscount, catalog.currencyCode)}`}
               className="text-main"
             />
             {promoDiscount > 0 && (
               <SummaryRow
                 label="Promo discount"
-                value={`-${formatPrice(promoDiscount)}`}
+                value={`-${formatPrice(promoDiscount, catalog.currencyCode)}`}
                 className="text-main"
               />
             )}
             <SummaryRow label="Express shipping" value="Free" valueClassName="text-success" />
             <SummaryRow
               label="Total amount"
-              value={formatPrice(total)}
+              value={formatPrice(total, catalog.currencyCode)}
               className="border-t border-border pt-2 text-base"
               valueClassName="text-main"
             />

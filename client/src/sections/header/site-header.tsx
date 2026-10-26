@@ -1,13 +1,8 @@
 import { Button, SegmentedControl } from "@/components"
-import { SPORTS } from "@/data/catalog"
+import { useCatalog } from "@/catalog/use-catalog"
 import { formatPrice } from "@/lib/pricing"
 import { selectCartPricing, useStore } from "@/store/store"
 import type { SportId } from "@/types"
-
-const sportOptions = SPORTS.map((sport) => ({
-  value: sport.id,
-  label: `${sport.icon} ${sport.label}`,
-}))
 
 function Logo() {
   return (
@@ -29,7 +24,12 @@ function Logo() {
 
 export function SiteHeader() {
   const { state, dispatch } = useStore()
-  const { total } = selectCartPricing(state)
+  const catalog = useCatalog()
+  const { total } = selectCartPricing(state, catalog)
+  const sportOptions = catalog.sports.map((sport) => ({
+    value: sport.id,
+    label: `${sport.icon} ${sport.label}`,
+  }))
   const setSport = (sport: SportId) => dispatch({ type: "setSport", sport })
 
   return (
@@ -61,7 +61,7 @@ export function SiteHeader() {
               {state.cart.length}
             </span>
             <span className="hidden border-l border-main-foreground/30 pl-2 sm:inline-block">
-              {formatPrice(total)}
+              {formatPrice(total, catalog.currencyCode)}
             </span>
           </Button>
         </div>

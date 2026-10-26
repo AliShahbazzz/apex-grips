@@ -6,7 +6,7 @@
  * and it updates everywhere. Token names follow neobrutalism.dev.
  *
  * Grip colors (Crimson Red, Nitro Blue, ...) are product options, not
- * theme colors, so they live in src/data/catalog.ts.
+ * theme colors, so they come from the Medusa store API.
  */
 :root {
   /* Brand: primary actions, highlights, badges */

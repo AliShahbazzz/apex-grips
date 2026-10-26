@@ -1,11 +1,15 @@
 import { Badge, Heading, InfoTile } from "@/components"
-import { GRIP_COLORS, PACK_SIZE, PATTERNS, getSport } from "@/data/catalog"
+import { findSport, patternsForSport } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import { VALUE_PROPS } from "@/data/content"
 import { useStore } from "@/store/store"
 
 export function BuilderIntro() {
   const { state } = useStore()
-  const sport = getSport(state.sport)
+  const catalog = useCatalog()
+  const sport = findSport(catalog, state.sport)
+  const patternCount = patternsForSport(catalog, state.sport).length
 
   return (
     <div className="mb-6 flex flex-col justify-between gap-4 border-b-4 border-border pb-6 md:flex-row md:items-end">
@@ -19,7 +23,7 @@ export function BuilderIntro() {
           Build your
         </Heading>
         <p className="mt-2 text-sm font-bold uppercase tracking-wide text-foreground/70">
-          Mix & match {PATTERNS.length} high-tack textures across {GRIP_COLORS.length} pro
+          Mix & match {patternCount} high-tack textures across {catalog.colors.length} pro
           colors. 5x longer lasting eco-latex.
         </p>
       </div>

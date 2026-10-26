@@ -9,7 +9,7 @@ import {
   OptionCard,
   StepIndicator,
 } from "@/components"
-import { PATTERNS, SPORTS } from "@/data/catalog"
+import { useCatalog } from "@/catalog/use-catalog"
 import { useStore } from "@/store/store"
 
 const TOTAL_STEPS = 3
@@ -45,6 +45,7 @@ function Step({ step, title, highlight, description, children }: StepProps) {
 
 export function FitGuideDialog() {
   const { state, dispatch } = useStore()
+  const { sports, patterns } = useCatalog()
   const [step, setStep] = useState(1)
   const open = state.overlay === "fitGuide"
   const close = () => dispatch({ type: "closeOverlay" })
@@ -74,7 +75,7 @@ export function FitGuideDialog() {
             description="We'll calibrate handle contours, texture grip thickness, and stretch ratio."
           >
             <div className="grid grid-cols-2 gap-3">
-              {SPORTS.map((sport) => (
+              {sports.map((sport) => (
                 <OptionCard
                   key={sport.id}
                   icon={sport.icon}
@@ -108,7 +109,7 @@ export function FitGuideDialog() {
               <OptionCard
                 tone="dark"
                 title="🎨 Favorite colour first"
-                description={`Select signature color hex and test all ${PATTERNS.length} patterns`}
+                description={`Select signature color hex and test all ${patterns.length} patterns`}
                 trailing="→"
                 onClick={() => setStep(3)}
               />

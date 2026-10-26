@@ -6,7 +6,7 @@ import {
   DialogTitle,
   Heading,
 } from "@/components"
-import { PACK_SIZE } from "@/data/catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import { useStore } from "@/store/store"
 
 export function OrderSuccessDialog() {

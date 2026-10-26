@@ -1,10 +1,13 @@
 import { Button, GripCanvas } from "@/components"
-import { PACK_SIZE, getPattern } from "@/data/catalog"
+import { findPattern } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import { cn } from "@/lib/utils"
 import { countFilled, selectActiveBox, useStore } from "@/store/store"
 
 export function BoxSlots() {
   const { state, dispatch } = useStore()
+  const catalog = useCatalog()
   const { slots } = selectActiveBox(state)
 
   return (
@@ -27,7 +30,7 @@ export function BoxSlots() {
 
       <ul className="grid grid-cols-5 gap-2">
         {slots.map((slot, index) => {
-          const pattern = slot && getPattern(slot.patternId)
+          const pattern = slot && findPattern(catalog, slot.patternId)
           return (
             <li
               key={index}

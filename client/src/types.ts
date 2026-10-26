@@ -1,13 +1,20 @@
-export type SportId = "cricket" | "pickleball" | "tennis" | "badminton"
+/** Sport key from the product's metadata, e.g. "cricket" */
+export type SportId = string
 
+/** One Medusa product: the grip for a sport */
 export type Sport = {
   id: SportId
+  productId: string
   label: string
   icon: string
   /** Handle shape shown in the geometry section */
   handle: string
   /** Handle hint shown in the fit guide */
   fitHint: string
+  /** Patterns this sport is sold in */
+  patternIds: PatternId[]
+  /** Variant (SKU) id per pattern and color, keyed by variantKey() */
+  variantIds: Record<string, string>
 }
 
 export type GripColor = {
@@ -15,14 +22,8 @@ export type GripColor = {
   name: string
 }
 
-export type PatternId =
-  | "chevron"
-  | "ripple"
-  | "coil"
-  | "ring"
-  | "octopus"
-  | "lattice"
-  | "hex"
+/** Pattern handle, e.g. "chevron" */
+export type PatternId = string
 
 export type Pattern = {
   id: PatternId
@@ -30,10 +31,23 @@ export type Pattern = {
   badge: string
   description: string
   tag: string
-  /** 0-100 */
-  sweatScore: number
-  /** 0-100 */
-  shockScore: number
+  imageUrl: string | null
+  /** 0-100, optional until the backend provides it */
+  sweatScore?: number
+  /** 0-100, optional until the backend provides it */
+  shockScore?: number
+}
+
+/** Everything the storefront loads from the Medusa store API */
+export type Catalog = {
+  regionId: string
+  currencyCode: string
+  /** Price of a single grip */
+  gripPrice: number
+  /** In display order; the first one is the default */
+  sports: Sport[]
+  patterns: Pattern[]
+  colors: GripColor[]
 }
 
 export type CuratedBundleId = "stealth" | "crimson" | "mix"

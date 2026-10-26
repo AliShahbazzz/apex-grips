@@ -1,10 +1,14 @@
 import { Button, Heading } from "@/components"
-import { CURATED_BUNDLES, PATTERNS } from "@/data/catalog"
+import { patternsForSport } from "@/catalog/selectors"
+import { useCatalog } from "@/catalog/use-catalog"
+import { CURATED_BUNDLES } from "@/data/builder-rules"
 import { useStore } from "@/store/store"
 import { PatternCard } from "./pattern-card"
 
 export function PatternGallery() {
   const { state, dispatch } = useStore()
+  const catalog = useCatalog()
+  const patterns = patternsForSport(catalog, state.sport)
 
   return (
     <section aria-labelledby="patterns-heading" className="mb-12">
@@ -38,7 +42,7 @@ export function PatternGallery() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-        {PATTERNS.map((pattern) => (
+        {patterns.map((pattern) => (
           <PatternCard
             key={pattern.id}
             pattern={pattern}

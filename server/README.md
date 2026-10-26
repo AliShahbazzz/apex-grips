@@ -42,6 +42,22 @@ Visit the [Quickstart Guide](https://docs.medusajs.com/learn/installation) to se
 
 Visit the [Docs](https://docs.medusajs.com/learn/installation#get-started) to learn more about our system requirements.
 
+## Database
+
+This project uses a [Neon](https://neon.tech) serverless PostgreSQL database. The connection string is set as `DATABASE_URL` in `.env`. Use Neon's **pooled** connection string (the host containing `-pooler`).
+
+```bash
+DATABASE_URL=postgresql://<user>:<password>@<endpoint>-pooler.<region>.aws.neon.tech/<db>?sslmode=require
+```
+
+Run migrations after setting it:
+
+```bash
+npx medusa db:migrate
+```
+
+If the server can't connect and the error shows `getaddrinfo EAI_AGAIN ...neon.tech`, your network's DNS can't resolve the Neon host. Switch to a public DNS such as `1.1.1.1` or `8.8.8.8`.
+
 ## What is Medusa
 
 Medusa is a set of commerce modules and tools that allow you to build rich, reliable, and performant commerce applications without reinventing core commerce logic. The modules can be customized and used to build advanced ecommerce stores, marketplaces, or any product that needs foundational commerce primitives. All modules are open-source and freely available on npm.

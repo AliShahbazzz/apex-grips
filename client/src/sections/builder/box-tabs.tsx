@@ -1,4 +1,4 @@
-import { PACK_SIZE } from "@/data/catalog"
+import { PACK_SIZE } from "@/data/builder-rules"
 import { cn } from "@/lib/utils"
 import { countFilled, useStore } from "@/store/store"
 
