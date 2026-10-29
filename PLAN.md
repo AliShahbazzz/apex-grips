@@ -75,4 +75,4 @@ Needs a notification provider (Resend planned) plus subscribers.
 ## Other open items
 
 - [x] Wire the storefront checkout to the Medusa Store API (guest and signed-in)
-- [ ] Local Postgres for development to avoid Neon latency
+- [x] Local Postgres for development to avoid Neon latency (see server/README.md)

@@ -1,6 +1,7 @@
 /**
  * Seeds the Apex Grips catalog and the India store setup:
- *   - INR currency, India region, tax region, warehouse and free shipping
+ *   - INR currency, India region, tax region, shipping profile, warehouse and
+ *     free shipping
  *   - grip patterns (pattern module)
  *   - shared "Pattern" and "Grip Color" options
  *   - one product per sport, one variant (SKU) per pattern × color, each
@@ -16,6 +17,7 @@ import {
   createProductsWorkflow,
   createRegionsWorkflow,
   createShippingOptionsWorkflow,
+  createShippingProfilesWorkflow,
   createStockLocationsWorkflow,
   createTaxRegionsWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
@@ -49,6 +51,7 @@ import {
 const REGION_NAME = "India"
 const COUNTRY_CODE = "in"
 const STOCK_LOCATION_NAME = "India Warehouse"
+const SHIPPING_PROFILE_NAME = "Default Shipping Profile"
 
 /** Product metadata the storefront reads. `rank` sets the sport order. */
 const sportMetadata = (sport: SportData) => ({
@@ -68,7 +71,7 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
   const patternModuleService: PatternModuleService =
     container.resolve(PATTERN_MODULE)
 
-  // ---- Existing setup from the initial seed ---------------------------------
+  // ---- Defaults Medusa creates on app start ---------------------------------
 
   const { data: salesChannels } = await query.graph({
     entity: "sales_channel",
@@ -77,23 +80,34 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
   })
   const salesChannel = salesChannels[0]
 
-  const { data: shippingProfiles } = await query.graph({
-    entity: "shipping_profile",
-    fields: ["id"],
-  })
-  const shippingProfile = shippingProfiles[0]
-
   const { data: stores } = await query.graph({
     entity: "store",
     fields: ["id", "supported_currencies.currency_code"],
   })
   const store = stores[0]
 
-  if (!salesChannel || !shippingProfile || !store) {
+  if (!salesChannel || !store) {
     throw new MedusaError(
       MedusaError.Types.NOT_FOUND,
-      "Store, sales channel or shipping profile missing. Run `npx medusa db:migrate` first."
+      "Store or sales channel missing. Run `npx medusa db:migrate` first."
     )
+  }
+
+  // ---- Shipping profile -------------------------------------------------------
+
+  // Medusa doesn't create one; products and shipping options both need it
+  const { data: shippingProfiles } = await query.graph({
+    entity: "shipping_profile",
+    fields: ["id"],
+  })
+  let shippingProfileId = shippingProfiles[0]?.id
+
+  if (!shippingProfileId) {
+    const { result } = await createShippingProfilesWorkflow(container).run({
+      input: { data: [{ name: SHIPPING_PROFILE_NAME, type: "default" }] },
+    })
+    shippingProfileId = result[0].id
+    logger.info(`Created the "${SHIPPING_PROFILE_NAME}".`)
   }
 
   // ---- Store currency ---------------------------------------------------------
@@ -209,7 +223,7 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
           price_type: "flat",
           provider_id: "manual_manual",
           service_zone_id: fulfillmentSet.service_zones[0].id,
-          shipping_profile_id: shippingProfile.id,
+          shipping_profile_id: shippingProfileId,
           type: {
             label: "Standard",
             description: "Free delivery across India.",
@@ -358,7 +372,7 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
             subtitle: sport.geometry,
             description: `${sport.geometry} overgrip with a ${sport.fitHint.toLowerCase()} fit.`,
             status: ProductStatus.PUBLISHED,
-            shipping_profile_id: shippingProfile.id,
+            shipping_profile_id: shippingProfileId,
             sales_channels: [{ id: salesChannel.id }],
             metadata: sportMetadata(sport),
             options: [
@@ -440,10 +454,19 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
   // `product.created` is handled asynchronously; replay it so the index is
   // complete before this short-lived process exits.
   const search = container.resolve(Modules.SEARCH)
-  await search.ingest({
-    name: "product.created",
-    data: apexProductIds.map((id) => ({ id })),
-  } as never)
+  try {
+    await search.ingest({
+      name: "product.created",
+      data: apexProductIds.map((id) => ({ id })),
+    } as never)
+  } catch (error) {
+    // On a fresh database the index is only filled when the server first
+    // starts, and that fill reads the products straight from the database.
+    if (!MedusaError.isMedusaError(error) || error.type !== MedusaError.Types.NOT_FOUND) {
+      throw error
+    }
+    logger.info("Search index not filled yet; it picks up the products on the next server start.")
+  }
 
   logger.info("Done.")
 }

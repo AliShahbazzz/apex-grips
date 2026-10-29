@@ -14,7 +14,7 @@ import {
   deleteProductsWorkflow,
   deleteProductTagsWorkflow,
 } from "@medusajs/medusa/core-flows"
-import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, MedusaError, Modules } from "@medusajs/framework/utils"
 import type { ExecArgs } from "@medusajs/framework/types"
 import { APEX_PRODUCT_HANDLES } from "./data/apex-catalog"
 
@@ -43,10 +43,18 @@ export default async function removeDemoData({ container }: ExecArgs) {
     // Deletion events are handled asynchronously; replay them so the search
     // index drops the products before this short-lived process exits.
     const search = container.resolve(Modules.SEARCH)
-    await search.ingest({
-      name: "product.deleted",
-      data: demoProductIds.map((id) => ({ id })),
-    } as never)
+    try {
+      await search.ingest({
+        name: "product.deleted",
+        data: demoProductIds.map((id) => ({ id })),
+      } as never)
+    } catch (error) {
+      // On a fresh database the index is only filled when the server first
+      // starts, and that fill skips deleted products anyway.
+      if (!MedusaError.isMedusaError(error) || error.type !== MedusaError.Types.NOT_FOUND) {
+        throw error
+      }
+    }
   }
   logger.info(`Removed ${demoProductIds.length} demo product(s).`)
 

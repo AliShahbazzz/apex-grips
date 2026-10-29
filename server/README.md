@@ -58,6 +58,28 @@ npx medusa db:migrate
 
 If the server can't connect and the error shows `getaddrinfo EAI_AGAIN ...neon.tech`, your network's DNS can't resolve the Neon host. Switch to a public DNS such as `1.1.1.1` or `8.8.8.8`.
 
+### Local Postgres for development
+
+Neon is far from a development machine in India, and Medusa runs many queries per request, so a local database is much faster.
+
+```bash
+# once, as the postgres superuser
+sudo -u postgres psql \
+  -c "CREATE ROLE apex LOGIN PASSWORD 'apex_local' CREATEDB;" \
+  -c "CREATE DATABASE apex_grips OWNER apex;"
+```
+
+Set `DATABASE_URL=postgres://apex:apex_local@127.0.0.1:5432/apex_grips` in `.env`, then set up any new database (local or Neon) with:
+
+```bash
+npx medusa db:migrate                                   # tables + Medusa defaults + demo data
+npx medusa exec ./src/scripts/seed-apex-catalog.ts      # India store setup and the Apex catalog
+npx medusa exec ./src/scripts/remove-demo-data.ts       # drop the demo products
+npx medusa user -e <email> -p <password>                # admin login
+```
+
+Each database has its own publishable key (Admin → Settings → Publishable API Keys). Put it in `client/.env.development.local`, which overrides `client/.env.development` and isn't committed. The search index fills the first time the server starts.
+
 ## What is Medusa
 
 Medusa is a set of commerce modules and tools that allow you to build rich, reliable, and performant commerce applications without reinventing core commerce logic. The modules can be customized and used to build advanced ecommerce stores, marketplaces, or any product that needs foundational commerce primitives. All modules are open-source and freely available on npm.
