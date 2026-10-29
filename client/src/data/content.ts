@@ -2,7 +2,7 @@
 
 export const ANNOUNCEMENTS = [
   { icon: "⚡", text: "Apex Grips: Your Grip Guy" },
-  { icon: "🔥", text: "Free Express Shipping on 2+ Bundles" },
+  { icon: "🔥", text: "Free Shipping Across India" },
   { icon: "🛡️", text: "5X Durability Eco-Latex Matrix" },
   { icon: "💪", text: "Sweat-Proof Micro-Channel Tech" },
 ]

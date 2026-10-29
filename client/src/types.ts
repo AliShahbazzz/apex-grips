@@ -43,6 +43,8 @@ export type Pattern = {
 /** Everything the storefront loads from the Medusa store API */
 export type Catalog = {
   regionId: string
+  /** ISO 2 country the store ships to, e.g. "in" */
+  countryCode: string
   currencyCode: string
   /** Price of a single grip */
   gripPrice: number

@@ -5,10 +5,6 @@
 import type { CuratedBundle } from "@/types"
 
 export const PACK_SIZE = 5
-/** Discount applied to every box after the first */
-export const MULTI_PACK_DISCOUNT = 0.15
-export const PROMO_DISCOUNT = 0.1
-export const PROMO_CODES = ["APEX10", "SUPER10"]
 
 /** Colors are hex codes; ones the catalog doesn't sell are skipped. */
 export const CURATED_BUNDLES: CuratedBundle[] = [

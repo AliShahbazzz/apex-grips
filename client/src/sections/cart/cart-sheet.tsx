@@ -1,7 +1,5 @@
-import { useState, type FormEvent } from "react"
 import {
   Button,
-  Input,
   Sheet,
   SheetClose,
   SheetContent,
@@ -11,7 +9,7 @@ import { useCatalog } from "@/catalog/use-catalog"
 import { PACK_SIZE } from "@/data/builder-rules"
 import { formatPrice } from "@/lib/pricing"
 import { cn } from "@/lib/utils"
-import { selectCartPricing, useStore } from "@/store/store"
+import { selectCartTotal, useStore } from "@/store/store"
 import { CartItemCard } from "./cart-item-card"
 
 type SummaryRowProps = {
@@ -30,48 +28,10 @@ function SummaryRow({ label, value, className, valueClassName }: SummaryRowProps
   )
 }
 
-function PromoForm() {
-  const { state, dispatch } = useStore()
-  const [code, setCode] = useState("")
-
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
-    dispatch({ type: "applyPromo", code })
-  }
-
-  return (
-    <form onSubmit={submit} className="space-y-1">
-      <div className="flex items-center gap-2">
-        <Input
-          aria-label="Promo code"
-          placeholder="Promo code (e.g. APEX10)"
-          value={code}
-          onChange={(event) => setCode(event.target.value)}
-          className="flex-1 py-2"
-        />
-        <Button type="submit" variant="noShadow" className="h-auto bg-inverse py-2 text-inverse-foreground hover:bg-main">
-          Apply
-        </Button>
-      </div>
-      {state.promoMessage && (
-        <p
-          role="status"
-          className={cn(
-            "text-[10px] font-black uppercase",
-            state.promoMessage.valid ? "text-success" : "text-main"
-          )}
-        >
-          {state.promoMessage.text}
-        </p>
-      )}
-    </form>
-  )
-}
-
 export function CartSheet() {
   const { state, dispatch } = useStore()
   const catalog = useCatalog()
-  const { subtotal, multiPackDiscount, promoDiscount, total } = selectCartPricing(state, catalog)
+  const total = selectCartTotal(state, catalog)
   const isEmpty = state.cart.length === 0
 
   return (
@@ -119,23 +79,9 @@ export function CartSheet() {
         </div>
 
         <div className="space-y-3 border-t-4 border-border bg-secondary-background p-5">
-          <PromoForm />
-
-          <div className="space-y-1 border-t-2 border-border/20 pt-3 text-xs font-black uppercase">
-            <SummaryRow label="Subtotal" value={formatPrice(subtotal, catalog.currencyCode)} />
-            <SummaryRow
-              label="Multi-pack discount"
-              value={`-${formatPrice(multiPackDiscount, catalog.currencyCode)}`}
-              className="text-main"
-            />
-            {promoDiscount > 0 && (
-              <SummaryRow
-                label="Promo discount"
-                value={`-${formatPrice(promoDiscount, catalog.currencyCode)}`}
-                className="text-main"
-              />
-            )}
-            <SummaryRow label="Express shipping" value="Free" valueClassName="text-success" />
+          <div className="space-y-1 text-xs font-black uppercase">
+            <SummaryRow label="Subtotal" value={formatPrice(total, catalog.currencyCode)} />
+            <SummaryRow label="Shipping" value="Free" valueClassName="text-success" />
             <SummaryRow
               label="Total amount"
               value={formatPrice(total, catalog.currencyCode)}

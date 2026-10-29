@@ -181,6 +181,7 @@ export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
 
   return {
     regionId: region.id,
+    countryCode: REGION_COUNTRY,
     currencyCode: region.currency_code,
     gripPrice,
     sports,

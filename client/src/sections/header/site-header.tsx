@@ -2,7 +2,7 @@ import { Button, SegmentedControl } from "@/components"
 import { useAuth } from "@/auth/use-auth"
 import { useCatalog } from "@/catalog/use-catalog"
 import { formatPrice } from "@/lib/pricing"
-import { selectCartPricing, useStore } from "@/store/store"
+import { selectCartTotal, useStore } from "@/store/store"
 import type { SportId } from "@/types"
 
 function AccountButton() {
@@ -43,7 +43,7 @@ function Logo() {
 export function SiteHeader() {
   const { state, dispatch } = useStore()
   const catalog = useCatalog()
-  const { total } = selectCartPricing(state, catalog)
+  const total = selectCartTotal(state, catalog)
   const sportOptions = catalog.sports.map((sport) => ({
     value: sport.id,
     label: `${sport.icon} ${sport.label}`,

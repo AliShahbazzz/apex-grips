@@ -12,6 +12,10 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   return <textarea className={cn(fieldClassName, className)} {...props} />
 }
 
+export function Select({ className, ...props }: ComponentProps<"select">) {
+  return <select className={cn(fieldClassName, "cursor-pointer", className)} {...props} />
+}
+
 export function Label({ className, ...props }: ComponentProps<"label">) {
   return (
     <label

@@ -44,11 +44,35 @@ Client:
 - [ ] Same "verify your email" response whether or not the email has orders
       (no email enumeration)
 
+## Discounts and promo codes (backend)
+
+The storefront's mock discounts were removed; every price is now the plain
+per-grip price. Set these up as Medusa promotions so the cart and order totals
+come from the server.
+
+- [ ] Multi-pack discount (the mock was 15% off every box after the first);
+      the rule needs a decision, since the server only sees grips, not boxes
+- [ ] Promo codes (the mock had APEX10 / SUPER10 for 10% off)
+- [ ] Storefront: promo code field on the cart, and show discounts and totals
+      from the Medusa cart instead of computing them in the browser
+
+## Payments
+
+Checkout only offers cash on delivery (Medusa's `pp_system_default`, no online
+charge). UPI and Card show as "Coming soon".
+
+- [ ] Online payment provider for India (Razorpay plugin or Stripe)
+- [ ] Enable UPI / Card in `client/src/sections/checkout/checkout-dialog.tsx`
+
+## Emails
+
+Needs a notification provider (Resend planned) plus subscribers.
+
+- [ ] Order confirmation on `order.placed`
+- [ ] Password reset link on `auth.password_reset` (see above)
+- [ ] Email verification link on `auth.verification_requested` (see above)
+
 ## Other open items
 
-- [ ] Wire the storefront cart and checkout to the Medusa Store API (guest checkout)
-- [ ] Real payment provider for India (Razorpay or Stripe)
-- [ ] Order confirmation email on `order.placed`
-- [ ] Multi-pack discount rule (pending decision)
-- [ ] Promotions (when needed)
+- [x] Wire the storefront checkout to the Medusa Store API (guest and signed-in)
 - [ ] Local Postgres for development to avoid Neon latency

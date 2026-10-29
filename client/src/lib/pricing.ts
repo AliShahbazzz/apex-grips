@@ -1,4 +1,4 @@
-import { MULTI_PACK_DISCOUNT, PACK_SIZE, PROMO_DISCOUNT } from "@/data/builder-rules"
+import { PACK_SIZE } from "@/data/builder-rules"
 
 const formatters = new Map<string, Intl.NumberFormat>()
 
@@ -16,14 +16,10 @@ export function formatPrice(amount: number, currencyCode: string) {
   return formatter.format(amount)
 }
 
-/** First box is full price, every extra box gets the multi-pack discount. */
-export function getBundlePricing(boxCount: number, gripPrice: number, promoApplied = false) {
-  const packPrice = gripPrice * PACK_SIZE
-  const subtotal = boxCount * packPrice
-  const multiPackDiscount =
-    Math.max(0, boxCount - 1) * Math.round(packPrice * MULTI_PACK_DISCOUNT)
-  const promoDiscount = promoApplied ? Math.round(subtotal * PROMO_DISCOUNT) : 0
-  const total = Math.max(0, subtotal - multiPackDiscount - promoDiscount)
-
-  return { subtotal, multiPackDiscount, promoDiscount, total }
+/**
+ * Price of full boxes at the per-grip price. Discounts and promo codes will
+ * come from Medusa promotions, so the storefront doesn't apply any.
+ */
+export function getBoxesTotal(boxCount: number, gripPrice: number) {
+  return boxCount * PACK_SIZE * gripPrice
 }

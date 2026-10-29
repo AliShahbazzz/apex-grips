@@ -1,5 +1,5 @@
 import { findColor, findPattern, patternsForSport } from "@/catalog/selectors"
-import { CURATED_BUNDLES, PACK_SIZE, PROMO_CODES } from "@/data/builder-rules"
+import { CURATED_BUNDLES, PACK_SIZE } from "@/data/builder-rules"
 import type {
   Box,
   CartItem,
@@ -21,8 +21,6 @@ export type StoreState = {
   nextBoxId: number
   nextCartItemId: number
   cart: CartItem[]
-  promoApplied: boolean
-  promoMessage: { text: string; valid: boolean } | null
   overlay: Overlay | null
   inspectedPatternId: PatternId | null
   orderId: string | null
@@ -44,7 +42,6 @@ export type StoreAction =
   | { type: "applyBundle"; bundleId: CuratedBundleId }
   | { type: "addBoxToCart" }
   | { type: "removeFromCart"; id: string }
-  | { type: "applyPromo"; code: string }
   | { type: "openOverlay"; overlay: Overlay }
   | { type: "inspectPattern"; patternId: PatternId }
   | { type: "closeOverlay" }
@@ -64,8 +61,6 @@ export function createInitialState(catalog: Catalog): StoreState {
     nextBoxId: 2,
     nextCartItemId: 1,
     cart: [],
-    promoApplied: false,
-    promoMessage: null,
     overlay: null,
     inspectedPatternId: null,
     orderId: null,
@@ -195,17 +190,6 @@ export function createStoreReducer(catalog: Catalog) {
 
       case "removeFromCart":
         return { ...state, cart: state.cart.filter((item) => item.id !== action.id) }
-
-      case "applyPromo": {
-        const valid = PROMO_CODES.includes(action.code.trim().toUpperCase())
-        return {
-          ...state,
-          promoApplied: state.promoApplied || valid,
-          promoMessage: valid
-            ? { text: "Promo applied: extra 10% off!", valid }
-            : { text: `Invalid promo code. Try ${PROMO_CODES[0]}`, valid },
-        }
-      }
 
       case "openOverlay":
         return { ...state, overlay: action.overlay }
