@@ -20,3 +20,19 @@ export function Label({ className, ...props }: ComponentProps<"label">) {
     />
   )
 }
+
+type FieldProps = ComponentProps<"input"> & {
+  id: string
+  label: string
+}
+
+/** Label + input pair. Emails and passwords keep their typed case. */
+export function Field({ id, label, type, className, ...props }: FieldProps) {
+  const keepCase = type === "email" || type === "password"
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <Input id={id} type={type} className={cn(keepCase && "normal-case", className)} {...props} />
+    </div>
+  )
+}

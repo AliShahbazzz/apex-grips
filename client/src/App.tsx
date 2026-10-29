@@ -1,4 +1,6 @@
 import { useEffect } from "react"
+import { AccountSheet } from "@/sections/account/account-sheet"
+import { ResetPasswordDialog } from "@/sections/account/reset-password-dialog"
 import { BuilderIntro } from "@/sections/builder/builder-intro"
 import { BuilderPanel } from "@/sections/builder/builder-panel"
 import { InspectPatternDialog } from "@/sections/builder/inspect-pattern-dialog"
@@ -40,6 +42,8 @@ export default function App() {
       <FitGuideDialog />
       <InspectPatternDialog />
       <CartSheet />
+      <AccountSheet />
+      <ResetPasswordDialog />
       <CheckoutDialog />
       <OrderSuccessDialog />
       <Toaster />

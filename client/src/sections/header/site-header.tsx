@@ -1,8 +1,26 @@
 import { Button, SegmentedControl } from "@/components"
+import { useAuth } from "@/auth/use-auth"
 import { useCatalog } from "@/catalog/use-catalog"
 import { formatPrice } from "@/lib/pricing"
 import { selectCartPricing, useStore } from "@/store/store"
 import type { SportId } from "@/types"
+
+function AccountButton() {
+  const { dispatch } = useStore()
+  const { status, customer } = useAuth()
+  const label = status === "signedIn" ? customer?.first_name || "Account" : "Sign In"
+
+  return (
+    <Button
+      variant="neutral"
+      aria-label={status === "signedIn" ? "Your account" : "Sign in"}
+      onClick={() => dispatch({ type: "openOverlay", overlay: "account" })}
+    >
+      <span aria-hidden>👤</span>
+      <span className="hidden max-w-24 truncate sm:inline">{label}</span>
+    </Button>
+  )
+}
 
 function Logo() {
   return (
@@ -54,6 +72,8 @@ export function SiteHeader() {
           >
             <span className="text-main">⚡</span> Fit Guide
           </Button>
+
+          <AccountButton />
 
           <Button onClick={() => dispatch({ type: "openOverlay", overlay: "cart" })}>
             <span>Cart</span>

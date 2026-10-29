@@ -11,7 +11,7 @@ import type {
   SportId,
 } from "@/types"
 
-export type Overlay = "fitGuide" | "inspect" | "cart" | "checkout" | "success"
+export type Overlay = "fitGuide" | "inspect" | "cart" | "checkout" | "success" | "account"
 
 export type StoreState = {
   sport: SportId
@@ -49,6 +49,7 @@ export type StoreAction =
   | { type: "inspectPattern"; patternId: PatternId }
   | { type: "closeOverlay" }
   | { type: "placeOrder"; orderId: string }
+  | { type: "showToast"; message: string }
   | { type: "dismissToast"; id: number }
   | { type: "reset" }
 
@@ -217,6 +218,9 @@ export function createStoreReducer(catalog: Catalog) {
 
       case "placeOrder":
         return { ...state, overlay: "success", orderId: action.orderId }
+
+      case "showToast":
+        return withToast(state, action.message)
 
       case "dismissToast":
         // Ignore timers from toasts that were already replaced
