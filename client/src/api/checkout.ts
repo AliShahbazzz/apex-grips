@@ -2,8 +2,8 @@ import { findSport, variantKey } from "@/catalog/selectors"
 import { medusaRequest } from "@/lib/medusa"
 import type { CartItem, Catalog } from "@/types"
 
-/** Medusa's built-in manual provider: no online charge, so it works as cash on delivery */
-export const CASH_ON_DELIVERY_PROVIDER = "pp_system_default"
+/** Razorpay payment provider registered on the server */
+const RAZORPAY_PROVIDER = "pp_razorpay_razorpay"
 
 export type CheckoutAddress = {
   first_name: string
@@ -16,15 +16,28 @@ export type CheckoutAddress = {
   postal_code: string
 }
 
-export type PlaceOrderInput = {
+export type PrepareCheckoutInput = {
   catalog: Catalog
   /** Boxes in the storefront cart */
   boxes: CartItem[]
   email: string
   address: CheckoutAddress
-  paymentProviderId: string
   /** Signed-in customer's token, so the order lands in their account */
   token?: string
+}
+
+/** What the server's Razorpay provider stores on the payment session */
+export type RazorpaySession = {
+  key_id: string
+  razorpay_order_id: string
+  /** In paise */
+  amount: number
+  currency: string
+}
+
+export type PreparedCheckout = {
+  cartId: string
+  razorpay: RazorpaySession
 }
 
 export type PlacedOrder = {
@@ -38,6 +51,12 @@ type LineItemInput = {
   variant_id: string
   quantity: number
   metadata: { box: number }
+}
+
+type PaymentCollectionResponse = {
+  payment_collection: {
+    payment_sessions?: { provider_id: string; data: Record<string, unknown> }[]
+  }
 }
 
 type CompleteCartResponse =
@@ -70,15 +89,17 @@ export function toLineItems(catalog: Catalog, boxes: CartItem[]): LineItemInput[
   return [...lines.values()]
 }
 
-/** Creates a Medusa cart from the boxes and completes it into an order */
-export async function placeOrder({
+/**
+ * Creates a Medusa cart from the boxes with shipping and a Razorpay payment
+ * session, ready for the customer to pay
+ */
+export async function prepareCheckout({
   catalog,
   boxes,
   email,
   address,
-  paymentProviderId,
   token,
-}: PlaceOrderInput): Promise<PlacedOrder> {
+}: PrepareCheckoutInput): Promise<PreparedCheckout> {
   const shippingAddress = { ...address, country_code: catalog.countryCode }
 
   const { cart } = await medusaRequest<{ cart: { id: string } }>("/store/carts", {
@@ -112,13 +133,23 @@ export async function placeOrder({
     "/store/payment-collections",
     { method: "POST", token, body: { cart_id: cart.id } }
   )
-  await medusaRequest(`/store/payment-collections/${payment_collection.id}/payment-sessions`, {
-    method: "POST",
-    token,
-    body: { provider_id: paymentProviderId },
-  })
+  const { payment_collection: withSession } = await medusaRequest<PaymentCollectionResponse>(
+    `/store/payment-collections/${payment_collection.id}/payment-sessions`,
+    { method: "POST", token, body: { provider_id: RAZORPAY_PROVIDER } }
+  )
+  const session = withSession.payment_sessions?.find(
+    (candidate) => candidate.provider_id === RAZORPAY_PROVIDER
+  )
+  if (!session) {
+    throw new Error("Online payment isn't available right now. Try again later.")
+  }
 
-  const result = await medusaRequest<CompleteCartResponse>(`/store/carts/${cart.id}/complete`, {
+  return { cartId: cart.id, razorpay: session.data as RazorpaySession }
+}
+
+/** Turns a paid cart into an order; the server confirms the payment with Razorpay first */
+export async function completeCheckout(cartId: string, token?: string): Promise<PlacedOrder> {
+  const result = await medusaRequest<CompleteCartResponse>(`/store/carts/${cartId}/complete`, {
     method: "POST",
     token,
   })

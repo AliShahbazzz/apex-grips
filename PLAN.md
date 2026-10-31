@@ -58,12 +58,14 @@ come from the server.
 
 ## Payments
 
-Cash on delivery uses Medusa's `pp_system_default`. Online payments go through
-Razorpay (`pp_razorpay_razorpay`, `server/src/modules/razorpay`).
+Every order is paid online through Razorpay (`pp_razorpay_razorpay`,
+`server/src/modules/razorpay`). The storefront has no cash on delivery option;
+`pp_system_default` is still enabled on the region.
 
 - [x] Razorpay payment provider (server), enabled for the India region by the seed
-- [ ] Storefront: "Pay Online" opens Razorpay Checkout, then completes the cart
+- [x] Storefront: "Proceed to Pay" → confirm → Razorpay Checkout → order placed
       (`client/src/api/checkout.ts`, `client/src/sections/checkout/checkout-dialog.tsx`)
+- [ ] Test the storefront flow end to end with Razorpay test payments
 - [ ] Webhook: `<server>/hooks/payment/razorpay_razorpay` with events
       `payment.authorized` and `order.paid`; set `RAZORPAY_WEBHOOK_SECRET`
 - [ ] Turn on auto-capture in the Razorpay dashboard

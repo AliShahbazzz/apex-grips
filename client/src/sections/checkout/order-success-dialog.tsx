@@ -29,8 +29,7 @@ export function OrderSuccessDialog() {
           </Heading>
         </DialogTitle>
         <DialogDescription className="text-xs font-bold uppercase text-foreground/70">
-          Your custom Apex Grips {PACK_SIZE}-pack is being handcrafted. Pay in cash when it
-          arrives.
+          Payment received. Your custom Apex Grips {PACK_SIZE}-pack is being handcrafted.
         </DialogDescription>
 
         <dl className="space-y-1 rounded-base border-2 border-border bg-secondary-background p-4 text-left text-xs font-black uppercase">
