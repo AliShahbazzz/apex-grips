@@ -1,10 +1,104 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-NT09DT7ES2"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-NT09DT7ES2");
+    </script>
+
     <title>Apex Grips | Custom 5-Pack Builder - YOUR GRIP GUY</title>
+    <meta
+      name="description"
+      content="Build your custom 5-pack of sports grips. Pick the pattern and color of every grip, with sweat-proof micro-channels and 5X durable eco-latex. Free shipping across India."
+    />
+    <link rel="canonical" href="https://apexgrips.in/" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Apex Grips" />
+
+    <!-- Icons and installed-app appearance -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#ff002b" />
+    <meta name="application-name" content="Apex Grips" />
+    <meta name="apple-mobile-web-app-title" content="Apex Grips" />
+
+    <!-- Link previews (WhatsApp, Facebook, Instagram, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Apex Grips" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:url" content="https://apexgrips.in/" />
+    <meta property="og:title" content="Apex Grips | Build Your Custom 5-Pack" />
+    <meta
+      property="og:description"
+      content="Pick the pattern and color of every grip. Sweat-proof, 5X durable, free shipping across India."
+    />
+    <meta property="og:image" content="https://apexgrips.in/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Apex Grips: build your custom 5-pack"
+    />
+
+    <!-- Link previews (X / Twitter) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Apex Grips | Build Your Custom 5-Pack"
+    />
+    <meta
+      name="twitter:description"
+      content="Pick the pattern and color of every grip. Sweat-proof, 5X durable, free shipping across India."
+    />
+    <meta name="twitter:image" content="https://apexgrips.in/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Apex Grips: build your custom 5-pack"
+    />
+
+    <!-- Search engines: who runs the site -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://apexgrips.in/#organization",
+            "name": "Apex Grips",
+            "slogan": "Your Grip Guy",
+            "url": "https://apexgrips.in/",
+            "logo": "https://apexgrips.in/icon-512.png"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://apexgrips.in/#website",
+            "name": "Apex Grips",
+            "url": "https://apexgrips.in/",
+            "inLanguage": "en-IN",
+            "publisher": { "@id": "https://apexgrips.in/#organization" }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Start connections early: the store API and fonts -->
+    <link rel="preconnect" href="https://api.apexgrips.in" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,6 +107,10 @@
     />
   </head>
   <body>
+    <noscript>
+      Apex Grips needs JavaScript to build your grip pack. Please enable it and
+      reload the page.
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
