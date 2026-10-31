@@ -143,11 +143,14 @@ Server code and config (`server/medusa-config.ts`):
 - [x] `server/.npmrc` with `legacy-peer-deps=true` (npm ci fails with ERESOLVE
       otherwise); Node pinned to `24.x`
 - [ ] DigitalOcean App Platform (server only), source directory `server`, region BLR1:
-      - Build command:
-        `npm run build && cd .medusa/server && npm install --omit=dev --legacy-peer-deps`
-        (`.medusa/server` doesn't get the `.npmrc`, so the flag is needed there)
-      - Run command: `cd .medusa/server && npm run start`
-      - Pre-deploy job: `cd .medusa/server && npm run predeploy`
+      - Build command: **empty**. The buildpack runs the `heroku-postbuild` script
+        (`medusa build` + install in `.medusa/server`) before it prunes
+        devDependencies; a custom build command runs after the prune, when
+        `ts-node` is gone and `medusa build` can't read `medusa-config.ts`.
+        `.medusa/server` doesn't get the `.npmrc`, so the script passes
+        `--legacy-peer-deps` itself
+      - Run command: `cd .medusa/server && npm run predeploy && npm run start`
+        (migrations on start; fine for a single instance, no pre-deploy job)
       - Health check: HTTP `/health`; instance with at least 1 GB RAM
       - `MEDUSA_BACKEND_URL` scoped to build and run time (baked into the admin)
 - [ ] Health check path: `/health`
