@@ -11,11 +11,15 @@ const PRODUCT_FIELDS = [
   "title",
   "handle",
   "metadata",
-  "*options",
+  "options.id",
+  "options.title",
+  // Listing value columns drops rank and metadata, so take them all
   "*options.values",
   "variants.id",
   "variants.thumbnail",
-  "*variants.options",
+  // Only the ids: "*" also nests each value's whole option, 140 times over
+  "variants.options.id",
+  // Medusa returns the whole calculated price object whatever is listed
   "*variants.calculated_price",
 ].join(",")
 
