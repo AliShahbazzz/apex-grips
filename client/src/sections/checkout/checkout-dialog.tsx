@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react"
+import { useCallback, useRef, useState, type FormEvent } from "react"
 import {
   Badge,
   Button,
@@ -55,6 +55,12 @@ export function CheckoutDialog() {
   const [step, setStep] = useState<Step>("form")
   const [details, setDetails] = useState<CheckoutDetails | null>(null)
   const pendingPayment = useRef<PendingPayment | null>(null)
+  const [isComplete, setIsComplete] = useState(false)
+
+  /** Checked when the form mounts too, since it can reopen already filled in */
+  const trackCompleteness = useCallback((form: HTMLFormElement | null) => {
+    if (form) setIsComplete(form.checkValidity())
+  }, [])
 
   const isOpen = state.overlay === "checkout"
 
@@ -163,7 +169,15 @@ export function CheckoutDialog() {
             </DialogTitle>
           </div>
 
-          <form onSubmit={submit} onChange={discardUnpaidCart} className="space-y-3">
+          <form
+            ref={trackCompleteness}
+            onSubmit={submit}
+            onChange={(event) => {
+              discardUnpaidCart()
+              trackCompleteness(event.currentTarget)
+            }}
+            className="space-y-3"
+          >
             {customer ? (
               <p className="text-xs font-bold text-foreground/60">
                 <span className="uppercase">Ordering as </span>
@@ -279,7 +293,7 @@ export function CheckoutDialog() {
 
             {error && <FormMessage>{error}</FormMessage>}
 
-            <Button type="submit" size="lg" className="w-full" disabled={pending}>
+            <Button type="submit" size="lg" className="w-full" disabled={pending || !isComplete}>
               {pending ? "Placing order…" : "🔥 Proceed to Pay"}
             </Button>
           </form>
