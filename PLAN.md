@@ -152,7 +152,11 @@ Server code and config (`server/medusa-config.ts`):
       - Run command: `cd .medusa/server && npm run predeploy && npm run start`
         (migrations on start; fine for a single instance, no pre-deploy job)
       - Health check: HTTP `/health`; instance with at least 1 GB RAM
-      - `MEDUSA_BACKEND_URL` scoped to build and run time (baked into the admin)
+      - `MEDUSA_BACKEND_URL` scoped to build and run time (baked into the admin).
+        Until `api.apexgrips.in` resolves, it and `ADMIN_CORS` / `AUTH_CORS` use
+        `https://apex-grips-b9hk6.ondigitalocean.app`; otherwise the admin login
+        page can't reach the server. Switch all three to the domain once its DNS
+        works, then redeploy (a restart isn't enough)
 - [ ] Health check path: `/health`
 
 Server environment variables (set on the host, never committed):
