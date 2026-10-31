@@ -1,4 +1,4 @@
-import { REGION_COUNTRY, storeGet } from "@/lib/medusa"
+import { REGION_COUNTRY, REGION_ID, storeGet } from "@/lib/medusa"
 import type { Catalog, GripColor, Pattern, Sport } from "@/types"
 import { variantKey } from "@/catalog/selectors"
 
@@ -22,12 +22,6 @@ const PRODUCT_FIELDS = [
 // ---- Store API response shapes (only the fields used here) ----------------
 
 type Metadata = Record<string, unknown> | null
-
-type ApiRegion = {
-  id: string
-  currency_code: string
-  countries?: { iso_2: string }[]
-}
 
 type ApiPattern = {
   handle: string
@@ -156,35 +150,29 @@ function sportOrder(a: ApiProduct, b: ApiProduct) {
 // ---- Fetch ----------------------------------------------------------------------
 
 export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
-  const [{ regions }, { patterns }] = await Promise.all([
-    storeGet<{ regions: ApiRegion[] }>(
-      "/store/regions",
-      { fields: "id,currency_code,*countries" },
+  // The region id comes from the environment, so products and patterns load in
+  // parallel. Prices are only calculated when a region is given.
+  const [{ products }, { patterns }] = await Promise.all([
+    storeGet<{ products: ApiProduct[] }>(
+      "/store/products",
+      { region_id: REGION_ID, fields: PRODUCT_FIELDS, limit: 100 },
       signal
     ),
     storeGet<{ patterns: ApiPattern[] }>("/store/patterns", {}, signal),
   ])
-
-  const region = regions.find((candidate) =>
-    candidate.countries?.some((country) => country.iso_2 === REGION_COUNTRY)
-  )
-  if (!region) throw new Error(`No region found for country "${REGION_COUNTRY}"`)
-
-  // Prices are only calculated when a region is given
-  const { products } = await storeGet<{ products: ApiProduct[] }>(
-    "/store/products",
-    { region_id: region.id, fields: PRODUCT_FIELDS, limit: 100 },
-    signal
-  )
   if (!products.length) throw new Error("No products found")
 
   const sports = [...products].sort(sportOrder).map(toSport)
   const soldPatternIds = new Set(sports.flatMap((sport) => sport.patternIds))
+  const currencyCode = products
+    .flatMap((product) => product.variants)
+    .find((variant) => variant.calculated_price)?.calculated_price?.currency_code
+  if (!currencyCode) throw new Error("Products have no price in this region")
 
   return {
-    regionId: region.id,
+    regionId: REGION_ID,
     countryCode: REGION_COUNTRY,
-    currencyCode: region.currency_code,
+    currencyCode,
     sports,
     // Patterns come ranked from the API; hide any no product sells
     patterns: patterns.map(toPattern).filter((pattern) => soldPatternIds.has(pattern.id)),

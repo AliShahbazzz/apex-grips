@@ -1,6 +1,7 @@
 const BACKEND_URL = import.meta.env.VITE_MEDUSA_BACKEND_URL
 const PUBLISHABLE_KEY = import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY
 
+export const REGION_ID = import.meta.env.VITE_MEDUSA_REGION_ID
 export const REGION_COUNTRY = import.meta.env.VITE_MEDUSA_REGION_COUNTRY ?? "in"
 
 type QueryValue = string | number | undefined
