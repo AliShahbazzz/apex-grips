@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+// import { useEffect } from "react"
 import { AccountSheet } from "@/sections/account/account-sheet"
 import { ResetPasswordDialog } from "@/sections/account/reset-password-dialog"
 import { BuilderIntro } from "@/sections/builder/builder-intro"
@@ -13,19 +13,18 @@ import { FitGuideDialog } from "@/sections/fit-guide/fit-guide-dialog"
 import { AnnouncementBar } from "@/sections/header/announcement-bar"
 import { SiteHeader } from "@/sections/header/site-header"
 import { WhyApex } from "@/sections/marketing/why-apex"
-import { useStore } from "@/store/store"
+// import { useStore } from "@/store/store"
 
 export default function App() {
-  const { dispatch } = useStore()
-
-  // Open the fit guide shortly after first load, like the mockup
-  useEffect(() => {
-    const timer = setTimeout(
-      () => dispatch({ type: "openOverlay", overlay: "fitGuide" }),
-      500
-    )
-    return () => clearTimeout(timer)
-  }, [dispatch])
+  // Hidden for now: open the fit guide shortly after first load, like the mockup
+  // const { dispatch } = useStore()
+  // useEffect(() => {
+  //   const timer = setTimeout(
+  //     () => dispatch({ type: "openOverlay", overlay: "fitGuide" }),
+  //     500
+  //   )
+  //   return () => clearTimeout(timer)
+  // }, [dispatch])
 
   return (
     <>

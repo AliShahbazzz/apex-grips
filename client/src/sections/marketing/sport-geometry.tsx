@@ -1,8 +1,8 @@
-import { Card, InfoTile } from "@/components"
-import { useCatalog } from "@/catalog/use-catalog"
+import { Card /* , InfoTile */ } from "@/components"
+// import { useCatalog } from "@/catalog/use-catalog"
 
 export function SportGeometry() {
-  const { sports } = useCatalog()
+  // const { sports } = useCatalog()
   return (
     <Card tone="inverse" className="mt-10 p-6">
       <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
@@ -19,6 +19,7 @@ export function SportGeometry() {
           </p>
         </div>
 
+        {/* Hidden for now: one tile per sport
         <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4 md:w-auto">
           {sports.map((sport) => (
             <InfoTile
@@ -30,6 +31,7 @@ export function SportGeometry() {
             />
           ))}
         </div>
+        */}
       </div>
     </Card>
   )

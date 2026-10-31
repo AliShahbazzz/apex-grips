@@ -1,9 +1,9 @@
-import { Button, SegmentedControl } from "@/components"
+import { Button /* , SegmentedControl */ } from "@/components"
 import { useAuth } from "@/auth/use-auth"
 import { useCatalog } from "@/catalog/use-catalog"
 import { formatPrice } from "@/lib/pricing"
 import { selectCartTotal, useStore } from "@/store/store"
-import type { SportId } from "@/types"
+// import type { SportId } from "@/types"
 
 function AccountButton() {
   const { dispatch } = useStore()
@@ -44,17 +44,19 @@ export function SiteHeader() {
   const { state, dispatch } = useStore()
   const catalog = useCatalog()
   const total = selectCartTotal(state, catalog)
-  const sportOptions = catalog.sports.map((sport) => ({
-    value: sport.id,
-    label: `${sport.icon} ${sport.label}`,
-  }))
-  const setSport = (sport: SportId) => dispatch({ type: "setSport", sport })
+  // Hidden for now: sport tabs (the store stays on the default sport, cricket)
+  // const sportOptions = catalog.sports.map((sport) => ({
+  //   value: sport.id,
+  //   label: `${sport.icon} ${sport.label}`,
+  // }))
+  // const setSport = (sport: SportId) => dispatch({ type: "setSport", sport })
 
   return (
     <header className="top-0 z-40 border-b-4 border-border bg-background">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
 
+        {/* Hidden for now: sport tabs
         <SegmentedControl
           label="Sport"
           options={sportOptions}
@@ -62,16 +64,17 @@ export function SiteHeader() {
           onChange={setSport}
           className="hidden md:flex"
         />
+        */}
 
         <div className="flex items-center gap-3">
-          <Button
+          {/* <Button
             variant="neutral"
             size="sm"
             className="hidden sm:inline-flex"
             onClick={() => dispatch({ type: "openOverlay", overlay: "fitGuide" })}
           >
             <span className="text-main">⚡</span> Fit Guide
-          </Button>
+          </Button> */}
 
           <AccountButton />
 
@@ -87,6 +90,7 @@ export function SiteHeader() {
         </div>
       </div>
 
+      {/* Hidden for now: sport tabs (mobile)
       <SegmentedControl
         label="Sport"
         options={sportOptions}
@@ -95,6 +99,7 @@ export function SiteHeader() {
         className="justify-around rounded-none border-0 border-t-2 p-2 md:hidden"
         itemClassName="rounded-base px-3 py-1"
       />
+      */}
     </header>
   )
 }
