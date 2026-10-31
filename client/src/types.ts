@@ -17,6 +17,10 @@ export type Sport = {
   variantIds: Record<string, string>
   /** Variant thumbnail per pattern and color, keyed by variantKey() */
   variantImages: Record<string, string>
+  /** Variant price per pattern and color, keyed by variantKey() */
+  variantPrices: Record<string, number>
+  /** Lowest grip price for this sport, used before the grips are picked */
+  gripPrice: number
 }
 
 export type GripColor = {
@@ -46,8 +50,6 @@ export type Catalog = {
   /** ISO 2 country the store ships to, e.g. "in" */
   countryCode: string
   currencyCode: string
-  /** Price of a single grip */
-  gripPrice: number
   /** In display order; the first one is the default */
   sports: Sport[]
   patterns: Pattern[]

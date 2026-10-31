@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { getBoxesTotal } from "@/lib/pricing"
+import { getCartTotal } from "@/lib/pricing"
 import { StoreContext } from "@/store/context"
 import type { StoreState } from "@/store/reducer"
 import type { Catalog } from "@/types"
@@ -21,5 +21,5 @@ export function countFilled(slots: readonly unknown[]) {
 }
 
 export function selectCartTotal(state: StoreState, catalog: Catalog) {
-  return getBoxesTotal(state.cart.length, catalog.gripPrice)
+  return getCartTotal(catalog, state.cart)
 }

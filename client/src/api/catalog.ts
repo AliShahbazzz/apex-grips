@@ -98,6 +98,7 @@ function toSport(product: ApiProduct): Sport {
 
   const variantIds: Record<string, string> = {}
   const variantImages: Record<string, string> = {}
+  const variantPrices: Record<string, number> = {}
   const patternIds = new Set<string>()
   for (const variant of product.variants) {
     const patternId = variant.options
@@ -108,9 +109,13 @@ function toSport(product: ApiProduct): Sport {
     patternIds.add(patternId)
     variantIds[variantKey(patternId, hex)] = variant.id
     if (variant.thumbnail) variantImages[variantKey(patternId, hex)] = variant.thumbnail
+    const price = variant.calculated_price?.calculated_amount
+    if (price !== undefined) variantPrices[variantKey(patternId, hex)] = price
   }
 
   const id = text(product.metadata, "sport") ?? product.handle
+  const prices = Object.values(variantPrices)
+  if (!prices.length) throw new Error(`${product.title} has no price in this region`)
   return {
     id,
     productId: product.id,
@@ -121,6 +126,8 @@ function toSport(product: ApiProduct): Sport {
     patternIds: [...patternIds],
     variantIds,
     variantImages,
+    variantPrices,
+    gripPrice: Math.min(...prices),
   }
 }
 
@@ -173,17 +180,11 @@ export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
 
   const sports = [...products].sort(sportOrder).map(toSport)
   const soldPatternIds = new Set(sports.flatMap((sport) => sport.patternIds))
-  const gripPrice = products
-    .flatMap((product) => product.variants)
-    .find((variant) => variant.calculated_price)?.calculated_price?.calculated_amount
-
-  if (gripPrice === undefined) throw new Error("Products have no price in this region")
 
   return {
     regionId: region.id,
     countryCode: REGION_COUNTRY,
     currencyCode: region.currency_code,
-    gripPrice,
     sports,
     // Patterns come ranked from the API; hide any no product sells
     patterns: patterns.map(toPattern).filter((pattern) => soldPatternIds.has(pattern.id)),

@@ -25,9 +25,7 @@ function AccountButton() {
 function Logo() {
   return (
     <div className="flex items-center gap-3">
-      <div className="rounded-base border-2 border-border bg-main p-2 text-xl font-black leading-none text-main-foreground shadow-shadow">
-        AG
-      </div>
+      <img src="/apex-grips-icon-colour.svg" alt="" width={48} height={48} className="size-12" />
       <div>
         <h1 className="text-2xl font-black uppercase leading-none tracking-tight">
           Apex <span className="text-main">Grips</span>

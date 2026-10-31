@@ -1,4 +1,5 @@
 import { Badge, Button, Card } from "@/components"
+import { findSport } from "@/catalog/selectors"
 import { useCatalog } from "@/catalog/use-catalog"
 import { PACK_SIZE } from "@/data/builder-rules"
 import { formatPrice, getBoxesTotal } from "@/lib/pricing"
@@ -44,7 +45,8 @@ export function BuilderPanel() {
   const { state, dispatch } = useStore()
   const catalog = useCatalog()
   const boxCount = state.boxes.length
-  const total = getBoxesTotal(boxCount, catalog.gripPrice)
+  const sport = findSport(catalog, state.sport)
+  const total = getBoxesTotal(boxCount, sport?.gripPrice ?? 0)
 
   return (
     <section aria-label="5-pack builder" className="z-30 mb-8 lg:sticky lg:top-[0px]">
