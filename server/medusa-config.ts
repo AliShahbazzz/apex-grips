@@ -17,5 +17,24 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/pattern",
     },
+    {
+      resolve: "@medusajs/medusa/payment",
+      options: {
+        // Cash on delivery uses the built-in pp_system_default, which is always registered
+        providers: process.env.RAZORPAY_KEY_ID
+          ? [
+              {
+                resolve: "./src/modules/razorpay",
+                id: "razorpay",
+                options: {
+                  key_id: process.env.RAZORPAY_KEY_ID,
+                  key_secret: process.env.RAZORPAY_KEY_SECRET,
+                  webhook_secret: process.env.RAZORPAY_WEBHOOK_SECRET,
+                },
+              },
+            ]
+          : [],
+      },
+    },
   ],
 })

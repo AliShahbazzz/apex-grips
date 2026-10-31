@@ -1,7 +1,7 @@
 /**
  * Seeds the Apex Grips catalog and the India store setup:
- *   - INR currency, India region, tax region, shipping profile, warehouse and
- *     free shipping
+ *   - INR currency, India region (cash on delivery, plus Razorpay when its keys
+ *     are set), tax region, shipping profile, warehouse and free shipping
  *   - grip patterns (pattern module)
  *   - shared "Pattern" and "Grip Color" options
  *   - one product per sport, one variant (SKU) per pattern × color, each
@@ -22,6 +22,7 @@ import {
   createTaxRegionsWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
   updateProductsWorkflow,
+  updateRegionsWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
 import {
@@ -52,6 +53,8 @@ const REGION_NAME = "India"
 const COUNTRY_CODE = "in"
 const STOCK_LOCATION_NAME = "India Warehouse"
 const SHIPPING_PROFILE_NAME = "Default Shipping Profile"
+/** Cash on delivery (Medusa's manual provider) and Razorpay */
+const PAYMENT_PROVIDERS = ["pp_system_default", "pp_razorpay_razorpay"]
 
 /** Product metadata the storefront reads. `rank` sets the sport order. */
 const sportMetadata = (sport: SportData) => ({
@@ -134,9 +137,17 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
 
   // ---- Region and tax ---------------------------------------------------------
 
+  // Razorpay is only registered when its keys are set (see medusa-config.ts)
+  const { data: registeredProviders } = await query.graph({
+    entity: "payment_provider",
+    fields: ["id"],
+    filters: { id: PAYMENT_PROVIDERS },
+  })
+  const paymentProviders = registeredProviders.map((provider) => provider.id)
+
   const { data: regions } = await query.graph({
     entity: "region",
-    fields: ["id"],
+    fields: ["id", "payment_providers.id"],
     filters: { name: REGION_NAME },
   })
   let regionId = regions[0]?.id
@@ -149,13 +160,27 @@ export default async function seedApexCatalog({ container }: ExecArgs) {
             name: REGION_NAME,
             currency_code: CURRENCY_CODE,
             countries: [COUNTRY_CODE],
-            payment_providers: ["pp_system_default"],
+            payment_providers: paymentProviders,
           },
         ],
       },
     })
     regionId = result[0].id
     logger.info("Created the India region.")
+  } else {
+    const enabled = (regions[0].payment_providers ?? [])
+      .map((provider) => provider?.id)
+      .filter((id): id is string => Boolean(id))
+    const missing = paymentProviders.filter((id) => !enabled.includes(id))
+    if (missing.length) {
+      await updateRegionsWorkflow(container).run({
+        input: {
+          selector: { id: regionId },
+          update: { payment_providers: [...enabled, ...missing] },
+        },
+      })
+      logger.info(`Enabled ${missing.join(", ")} for the India region.`)
+    }
   }
 
   const { data: taxRegions } = await query.graph({

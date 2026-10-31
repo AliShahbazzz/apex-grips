@@ -58,11 +58,17 @@ come from the server.
 
 ## Payments
 
-Checkout only offers cash on delivery (Medusa's `pp_system_default`, no online
-charge). UPI and Card show as "Coming soon".
+Cash on delivery uses Medusa's `pp_system_default`. Online payments go through
+Razorpay (`pp_razorpay_razorpay`, `server/src/modules/razorpay`).
 
-- [ ] Online payment provider for India (Razorpay plugin or Stripe)
-- [ ] Enable UPI / Card in `client/src/sections/checkout/checkout-dialog.tsx`
+- [x] Razorpay payment provider (server), enabled for the India region by the seed
+- [ ] Storefront: "Pay Online" opens Razorpay Checkout, then completes the cart
+      (`client/src/api/checkout.ts`, `client/src/sections/checkout/checkout-dialog.tsx`)
+- [ ] Webhook: `<server>/hooks/payment/razorpay_razorpay` with events
+      `payment.authorized` and `order.paid`; set `RAZORPAY_WEBHOOK_SECRET`
+- [ ] Turn on auto-capture in the Razorpay dashboard
+- [ ] Test refunds from the Medusa admin
+- [ ] Go live: live keys, live webhook, one small real order
 
 ## Emails
 
