@@ -83,6 +83,39 @@ Needs a notification provider (Resend planned) plus subscribers.
 - [ ] Password reset link on `auth.password_reset` (see above)
 - [ ] Email verification link on `auth.verification_requested` (see above)
 
+## Invoices
+
+Medusa has no invoice module. Build a custom one in `server/src/modules/invoice`,
+linked to orders.
+
+Decisions first:
+
+- [ ] GST registered? Registered → tax invoice with GSTIN, HSN code and the
+      CGST + SGST (same state) or IGST (other state) split. Not registered →
+      bill of supply without tax lines
+- [ ] Seller details on the invoice: legal name, address, GSTIN, HSN code for grips
+- [ ] Number format, e.g. `AG/2026-27/0001`: sequential with no gaps, restarting
+      each financial year (April–March)
+
+Server:
+
+- [ ] Invoice module: invoice record (number, order id, issued date, totals and
+      tax breakup at issue time) linked to the order
+- [ ] Set GST rates on the India tax region, so orders carry the tax amounts
+      the invoice shows (prices stay tax-inclusive)
+- [ ] Issue the invoice on `order.placed` (subscriber + workflow); numbering must
+      be safe when two orders are placed at the same moment
+- [ ] Generate the PDF (e.g. pdfmake) from the stored invoice, not the live order
+- [ ] `GET /store/orders/:id/invoice` for the order's customer and
+      `GET /admin/orders/:id/invoice` for the admin
+- [ ] Refunds and cancellations: credit note (decide when GST is decided)
+
+Admin and storefront:
+
+- [ ] Admin widget on the order page: invoice number + "Download invoice"
+- [ ] Storefront order history: "Download invoice" link
+- [ ] Attach the PDF to the order confirmation email (after Emails)
+
 ## Production deployment
 
 Hosting isn't chosen yet. The server needs a long-running Node host (Railway,
