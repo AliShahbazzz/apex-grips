@@ -139,9 +139,17 @@ Server code and config (`server/medusa-config.ts`):
 - [ ] `workerMode` from `MEDUSA_WORKER_MODE` (`shared` for a single instance;
       `server` + `worker` if split later)
 - [ ] `admin.backendUrl` from `MEDUSA_BACKEND_URL` so the admin calls the public URL
-- [ ] Add `"predeploy": "medusa db:migrate"` to `server/package.json` scripts
-- [ ] Build and start: `npx medusa build`, then in `.medusa/server`:
-      `npm install --omit=dev`, `npm run predeploy` (runs migrations), `npm run start`
+- [x] Add `"predeploy": "medusa db:migrate"` to `server/package.json` scripts
+- [x] `server/.npmrc` with `legacy-peer-deps=true` (npm ci fails with ERESOLVE
+      otherwise); Node pinned to `24.x`
+- [ ] DigitalOcean App Platform (server only), source directory `server`, region BLR1:
+      - Build command:
+        `npm run build && cd .medusa/server && npm install --omit=dev --legacy-peer-deps`
+        (`.medusa/server` doesn't get the `.npmrc`, so the flag is needed there)
+      - Run command: `cd .medusa/server && npm run start`
+      - Pre-deploy job: `cd .medusa/server && npm run predeploy`
+      - Health check: HTTP `/health`; instance with at least 1 GB RAM
+      - `MEDUSA_BACKEND_URL` scoped to build and run time (baked into the admin)
 - [ ] Health check path: `/health`
 
 Server environment variables (set on the host, never committed):
