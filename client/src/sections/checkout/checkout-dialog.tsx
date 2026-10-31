@@ -117,7 +117,7 @@ export function CheckoutDialog() {
             amount: payment.razorpay.amount,
             currency: payment.razorpay.currency,
             name: "Apex Grips",
-            description: "Custom grip pack",
+            description: "Apex Grips - Custom grip pack",
             prefill: {
               name: `${details.address.first_name} ${details.address.last_name}`,
               email: details.email,
