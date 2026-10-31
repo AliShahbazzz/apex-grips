@@ -138,6 +138,9 @@ Server code and config (`server/medusa-config.ts`):
       events and workflow state on restart and break with more than one instance
 - [ ] `workerMode` from `MEDUSA_WORKER_MODE` (`shared` for a single instance;
       `server` + `worker` if split later)
+- Note: `GET /store/catalog` caches in process memory (`src/lib/catalog-cache.ts`)
+  and a subscriber clears it. That only works with one `shared` instance;
+  before adding instances or a separate worker, move the cache to Redis
 - [ ] `admin.backendUrl` from `MEDUSA_BACKEND_URL` so the admin calls the public URL
 - [x] Add `"predeploy": "medusa db:migrate"` to `server/package.json` scripts
 - [x] `server/.npmrc` with `legacy-peer-deps=true` (npm ci fails with ERESOLVE

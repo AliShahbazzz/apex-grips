@@ -153,9 +153,22 @@ function sportOrder(a: ApiProduct, b: ApiProduct) {
 
 // ---- Fetch ----------------------------------------------------------------------
 
-export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
-  // The region id comes from the environment, so products and patterns load in
-  // parallel. Prices are only calculated when a region is given.
+type CatalogResponse = { products: ApiProduct[]; patterns: ApiPattern[] }
+
+/**
+ * Products and patterns from the server's cached /store/catalog. Falls back to
+ * the standard product and pattern routes if that fails, e.g. on a server
+ * that doesn't have the route yet.
+ */
+async function loadCatalogData(signal?: AbortSignal): Promise<CatalogResponse> {
+  try {
+    return await storeGet<CatalogResponse>("/store/catalog", { region_id: REGION_ID }, signal)
+  } catch (error) {
+    if (signal?.aborted) throw error
+    console.warn("Falling back to /store/products and /store/patterns:", error)
+  }
+
+  // Prices are only calculated when a region is given
   const [{ products }, { patterns }] = await Promise.all([
     storeGet<{ products: ApiProduct[] }>(
       "/store/products",
@@ -164,6 +177,11 @@ export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
     ),
     storeGet<{ patterns: ApiPattern[] }>("/store/patterns", {}, signal),
   ])
+  return { products, patterns }
+}
+
+export async function fetchCatalog(signal?: AbortSignal): Promise<Catalog> {
+  const { products, patterns } = await loadCatalogData(signal)
   if (!products.length) throw new Error("No products found")
 
   const sports = [...products].sort(sportOrder).map(toSport)
