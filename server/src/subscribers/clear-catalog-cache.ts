@@ -20,8 +20,10 @@ export const config: SubscriberConfig = {
     ...Object.values(ProductVariantWorkflowEvents),
     ...Object.values(ProductOptionWorkflowEvents),
     ...Object.values(RegionWorkflowEvents),
-    // Module-level events also cover changes made outside the admin workflows,
-    // such as price edits and the seed scripts
+    // Module-level events also cover changes that skip the workflows above.
+    // Scripts run with `medusa exec` are separate processes: without the Redis
+    // event bus their events never reach this server, so its cache only
+    // refreshes when it expires or the server restarts
     ...Object.values(ProductEvents),
     ...Object.values(PricingEvents),
   ],

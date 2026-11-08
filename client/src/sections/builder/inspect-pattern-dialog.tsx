@@ -25,17 +25,18 @@ export function InspectPatternDialog() {
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && close()}>
-      <DialogContent className="max-w-2xl sm:p-6">
+      <DialogContent className="max-w-5xl sm:p-6">
         {pattern && (
-          <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
-            <div className="flex flex-col items-center justify-center rounded-base border-2 border-border bg-secondary-background p-4">
+          <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-5">
+            <div className="flex flex-col items-center justify-center rounded-base border-2 border-border bg-secondary-background p-4 md:col-span-3">
               <GripPreview
                 imageUrl={imageUrl}
                 pattern={pattern.id}
                 color={state.activeColor.hex}
                 sport={state.sport}
-                width={260}
-                height={320}
+                width={420}
+                height={520}
+                hoverZoom={2.5}
                 label={`${pattern.name} in ${state.activeColor.name}`}
                 className="border border-border bg-background"
               />
@@ -44,7 +45,7 @@ export function InspectPatternDialog() {
               </span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 md:col-span-2">
               <Badge>{pattern.tag}</Badge>
               <DialogTitle asChild>
                 <Heading as="h3" className="text-3xl">

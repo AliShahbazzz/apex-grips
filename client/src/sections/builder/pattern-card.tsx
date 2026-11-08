@@ -20,15 +20,23 @@ export function PatternCard({ pattern, color, sport, onAdd, onInspect }: Pattern
       </Badge>
 
       <div className="relative mb-3 flex items-center justify-center rounded-base border-2 border-border bg-secondary-background p-2 sm:p-3">
-        <GripPreview
-          imageUrl={findVariantImage(catalog, sport, pattern.id, color.hex)}
-          pattern={pattern.id}
-          color={color.hex}
-          sport={sport}
-          width={140}
-          height={170}
-          label={`${pattern.name} in ${color.name}`}
-        />
+        <button
+          type="button"
+          onClick={onInspect}
+          aria-label={`Inspect ${pattern.name} in ${color.name}`}
+          className="cursor-zoom-in rounded-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <GripPreview
+            imageUrl={findVariantImage(catalog, sport, pattern.id, color.hex)}
+            pattern={pattern.id}
+            color={color.hex}
+            sport={sport}
+            width={140}
+            height={170}
+            zoom={5}
+            label={`${pattern.name} in ${color.name}`}
+          />
+        </button>
         <Button
           variant="dark"
           size="xs"
