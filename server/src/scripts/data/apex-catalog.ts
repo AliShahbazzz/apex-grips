@@ -66,7 +66,7 @@ export type PatternData = {
 export const PATTERNS: PatternData[] = [
   {
     handle: "chevron",
-    name: "Chevron Matrix",
+    name: "Ring Chevron",
     badge: "🔥 Top Seller",
     tag: "Max Tack",
     description:
@@ -82,7 +82,7 @@ export const PATTERNS: PatternData[] = [
   },
   {
     handle: "coil",
-    name: "Helical Coil",
+    name: "Coil Cushion",
     badge: "⭐ Best Seller",
     tag: "Bevel Feel",
     description:
@@ -98,7 +98,7 @@ export const PATTERNS: PatternData[] = [
   },
   {
     handle: "octopus",
-    name: "Octo-Tack Suction",
+    name: "Octopus Seal",
     badge: "🔥 Hot Pick",
     tag: "Vacuum Grip",
     description:
@@ -106,7 +106,7 @@ export const PATTERNS: PatternData[] = [
   },
   {
     handle: "lattice",
-    name: "3D Diamond Lattice",
+    name: "3D Diamond",
     badge: "⚡ New Tech",
     tag: "3D Mesh",
     description:
