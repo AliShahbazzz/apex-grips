@@ -7,8 +7,10 @@ export function ColorPicker() {
   const { colors } = useCatalog()
 
   return (
-    <div className="rounded-base border-2 border-border bg-secondary-background p-3">
-      <div className="mb-2 flex items-center justify-between gap-2">
+    // On phones only the swatches show, to keep the sticky panel short; the
+    // selected one has a ✓ and every swatch keeps its name as a label
+    <div className="sm:rounded-base sm:border-2 sm:border-border sm:bg-secondary-background sm:p-3">
+      <div className="mb-2 hidden items-center justify-between gap-2 sm:flex">
         <span className="flex items-center gap-1.5 text-xs font-black uppercase">
           <span>🎨</span> Active Color:
           <span className="text-main">{state.activeColor.name}</span>

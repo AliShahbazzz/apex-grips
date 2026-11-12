@@ -17,7 +17,7 @@ export function ColorSwatch({ color, label, selected, onSelect }: ColorSwatchPro
       onClick={onSelect}
       style={{ backgroundColor: color }}
       className={cn(
-        "flex size-10 cursor-pointer items-center justify-center rounded-base border-2 border-border transition-transform hover:scale-110",
+        "flex size-8 cursor-pointer items-center justify-center rounded-base border-2 border-border transition-transform hover:scale-110 sm:size-10",
         selected && "ring-4 ring-ring"
       )}
     >
